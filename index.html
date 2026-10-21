@@ -35,7 +35,6 @@
             color: #f3f4f6;
         }
 
-        /* Glow effects */
         .glow-amber {
             box-shadow: 0 0 25px rgba(234, 179, 8, 0.25);
         }
@@ -74,7 +73,23 @@
         }
     </style>
 </head>
-<body class="min-h-screen flex flex-col bg-[#0b0c10] text-gray-100 antialiased">
+<body class="min-h-screen flex flex-col bg-[#0b0c10] text-gray-100 antialiased relative">
+
+    <!-- ACCESS DENIED / BLOCKED IP SCREEN -->
+    <div id="blocked-screen" class="fixed inset-0 bg-[#0b0c10] z-[100] hidden flex flex-col items-center justify-center p-6 text-center">
+        <div class="max-w-md w-full bg-darkcard p-8 rounded-2xl border border-red-500/30 shadow-2xl space-y-4">
+            <div class="w-16 h-16 rounded-2xl bg-red-500/10 border border-red-500/30 text-red-500 flex items-center justify-center text-3xl mx-auto">
+                <i class="fa-solid fa-ban"></i>
+            </div>
+            <h2 class="text-2xl font-extrabold text-white">Åtkomst Nekad</h2>
+            <p class="text-xs text-gray-400 leading-relaxed">
+                Din IP-adress har blivit blockerad från denna webbplats av en administratör.
+            </p>
+            <div class="bg-darkbg p-3 rounded-xl border border-darkcardborder font-mono text-xs text-amber-500">
+                Din IP: <span id="blocked-ip-display">Identifierar...</span>
+            </div>
+        </div>
+    </div>
 
     <!-- Header Navigation -->
     <header class="border-b border-darkcardborder bg-[#121318]/90 backdrop-blur sticky top-0 z-50 px-4 py-3">
@@ -91,21 +106,27 @@
                 </div>
             </div>
 
-            <!-- Tab Buttons -->
-            <nav class="flex items-center space-x-2 bg-darkcard p-1 rounded-xl border border-darkcardborder">
-                <button id="nav-ptable-btn" onclick="switchTab('ptable')" class="px-4 py-1.5 rounded-lg text-sm font-semibold transition-all flex items-center gap-2 bg-amber-600 text-black shadow-md font-bold">
-                    <i class="fa-solid fa-table-cells"></i>
-                    <span>Periodiska Systemet (Ptable)</span>
-                </button>
-                <button id="nav-quiz-btn" onclick="switchTab('quiz')" class="px-4 py-1.5 rounded-lg text-sm font-semibold text-gray-400 hover:text-white transition-all flex items-center gap-2">
-                    <i class="fa-solid fa-file-signature"></i>
-                    <span>Kemi Mini-Prov</span>
-                </button>
-                <button id="nav-history-btn" onclick="switchTab('history')" class="px-4 py-1.5 rounded-lg text-sm font-semibold text-gray-400 hover:text-white transition-all flex items-center gap-2">
-                    <i class="fa-solid fa-clock-history"></i>
-                    <span>Provhistorik</span>
-                </button>
-            </nav>
+            <!-- Tab Buttons & Admin Login -->
+            <div class="flex items-center gap-3">
+                <nav class="flex items-center space-x-2 bg-darkcard p-1 rounded-xl border border-darkcardborder">
+                    <button id="nav-ptable-btn" onclick="switchTab('ptable')" class="px-4 py-1.5 rounded-lg text-sm font-semibold transition-all flex items-center gap-2 bg-amber-600 text-black shadow-md font-bold">
+                        <i class="fa-solid fa-table-cells"></i>
+                        <span>Periodiska Systemet</span>
+                    </button>
+                    <button id="nav-quiz-btn" onclick="switchTab('quiz')" class="px-4 py-1.5 rounded-lg text-sm font-semibold text-gray-400 hover:text-white transition-all flex items-center gap-2">
+                        <i class="fa-solid fa-file-signature"></i>
+                        <span>Kemi Mini-Prov</span>
+                    </button>
+                    <button id="nav-history-btn" onclick="switchTab('history')" class="px-4 py-1.5 rounded-lg text-sm font-semibold text-gray-400 hover:text-white transition-all flex items-center gap-2">
+                        <i class="fa-solid fa-clock-rotate-left"></i>
+                        <span>Historik</span>
+                    </button>
+                    <button id="nav-admin-btn" onclick="switchTab('admin')" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-gray-400 hover:text-white transition-all flex items-center gap-2 border border-amber-500/30 text-amber-500 hover:bg-amber-500/10">
+                        <i class="fa-solid fa-shield-halved"></i>
+                        <span>Admin</span>
+                    </button>
+                </nav>
+            </div>
         </div>
     </header>
 
@@ -139,13 +160,13 @@
                 <iframe id="ptable-iframe" src="https://ptable.com/?lang=sv" class="w-full h-full border-0"></iframe>
             </div>
 
-            <!-- Fallback Built-in Table Container (Hidden by default) -->
+            <!-- Fallback Built-in Table Container -->
             <div id="fallback-container" class="hidden bg-darkcard rounded-2xl p-4 border border-darkcardborder shadow-2xl overflow-x-auto space-y-4">
                 <div class="flex items-center justify-between">
                     <h3 class="text-sm font-bold text-amber-500 flex items-center gap-2">
                         <i class="fa-solid fa-atom"></i> Inbyggd Snabbvy (Svenska)
                     </h3>
-                    <span class="text-xs text-gray-400">Klicka på ett ämne för detaljer</span>
+                    <span class="text-xs text-gray-400">Snabböversikt över vanliga grundämnen</span>
                 </div>
                 <div class="min-w-[900px]">
                     <div id="ptable-grid" class="ptable-grid"></div>
@@ -345,7 +366,6 @@
                         Analyserar kemiska begrepp...
                     </div>
                     <div id="next-step-box" class="text-xs text-amber-400 bg-amber-500/10 p-3 rounded-xl border border-amber-500/20">
-                        <!-- Next step recommendations -->
                     </div>
                 </div>
 
@@ -371,7 +391,7 @@
         </section>
 
 
-        <!-- TAB 3: PROVHISTORIK (LOCALSTORAGE DATABASE) -->
+        <!-- TAB 3: PROVHISTORIK -->
         <section id="tab-history" class="hidden space-y-6">
             <div class="bg-darkcard rounded-2xl p-6 sm:p-8 border border-darkcardborder shadow-2xl space-y-6 max-w-4xl mx-auto">
                 <div class="flex justify-between items-center border-b border-darkcardborder pb-4">
@@ -379,7 +399,7 @@
                         <h2 class="text-xl font-bold text-white flex items-center gap-2">
                             <i class="fa-solid fa-database text-amber-500"></i> Inlämnade Prov i Databasen
                         </h2>
-                        <p class="text-xs text-gray-400">Historik över alla prov som du har genomfört och som rättats av Groq AI.</p>
+                        <p class="text-xs text-gray-400">Historik över alla prov som genomförts och rättats av Groq AI.</p>
                     </div>
                     <button onclick="clearHistory()" class="px-3 py-1.5 rounded-lg bg-red-500/10 border border-red-500/30 text-red-400 text-xs font-semibold hover:bg-red-500 hover:text-white transition-all">
                         <i class="fa-solid fa-trash mr-1"></i> Rensa Historik
@@ -387,9 +407,98 @@
                 </div>
 
                 <div id="history-list" class="space-y-3">
-                    <!-- Dynamic stored tests -->
                 </div>
             </div>
+        </section>
+
+
+        <!-- TAB 4: ADMIN PANEL -->
+        <section id="tab-admin" class="hidden space-y-6">
+            
+            <!-- ADMIN LOGIN SCREEN -->
+            <div id="admin-login-screen" class="max-w-md mx-auto bg-darkcard rounded-2xl p-8 border border-darkcardborder shadow-2xl space-y-6 text-center">
+                <div class="w-16 h-16 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-500 flex items-center justify-center text-2xl mx-auto glow-amber">
+                    <i class="fa-solid fa-lock"></i>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold text-white">Admin Inloggning</h3>
+                    <p class="text-xs text-gray-400 mt-1">Ange administratörslösenord för att hantera användare och IP-blockeringar.</p>
+                </div>
+
+                <div class="space-y-4">
+                    <input type="password" id="admin-password-input" class="w-full px-4 py-3 rounded-xl bg-darkbg border border-darkcardborder text-white text-sm focus:outline-none focus:border-amber-500" placeholder="Lösenord...">
+                    <button onclick="loginAdmin()" class="w-full py-3 rounded-xl bg-amber-600 hover:bg-amber-500 text-black font-bold text-xs uppercase tracking-wider transition-all shadow-lg shadow-amber-600/20">
+                        Logga in som Admin
+                    </button>
+                    <p id="admin-login-error" class="text-xs text-red-400 hidden font-semibold"></p>
+                </div>
+            </div>
+
+            <!-- ADMIN DASHBOARD (AFTER LOGIN) -->
+            <div id="admin-dashboard" class="hidden max-w-5xl mx-auto space-y-6">
+                
+                <div class="flex items-center justify-between border-b border-darkcardborder pb-4">
+                    <div>
+                        <h2 class="text-2xl font-extrabold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-shield-halved text-amber-500"></i> Admin Instrumentpanel
+                        </h2>
+                        <p class="text-xs text-gray-400">Realtidsöversikt över besökare, IP-adresser och säkerhet.</p>
+                    </div>
+                    <button onclick="logoutAdmin()" class="px-4 py-2 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 text-xs font-bold hover:bg-red-500 hover:text-white transition-all">
+                        Logga ut
+                    </button>
+                </div>
+
+                <!-- Manual IP Block Control -->
+                <div class="bg-darkcard rounded-2xl p-6 border border-darkcardborder shadow-xl space-y-4">
+                    <h3 class="text-sm font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-user-slash text-red-400"></i> Manuell IP-Blockering
+                    </h3>
+                    <div class="flex gap-3">
+                        <input type="text" id="manual-block-ip" placeholder="Exempel: 192.168.1.1" class="flex-1 px-4 py-2.5 rounded-xl bg-darkbg border border-darkcardborder text-xs text-white focus:outline-none focus:border-red-500">
+                        <button onclick="blockManualIP()" class="px-5 py-2.5 rounded-xl bg-red-600 hover:bg-red-500 text-white font-bold text-xs transition-all shadow-lg shadow-red-600/20">
+                            Blockera IP
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Blocked IPs List -->
+                <div class="bg-darkcard rounded-2xl p-6 border border-darkcardborder shadow-xl space-y-4">
+                    <h3 class="text-sm font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-ban text-red-500"></i> Blockerade IP-Adresser (<span id="blocked-count">0</span>)
+                    </h3>
+                    <div id="blocked-ips-list" class="flex flex-wrap gap-2">
+                    </div>
+                </div>
+
+                <!-- Visitor Log Table -->
+                <div class="bg-darkcard rounded-2xl p-6 border border-darkcardborder shadow-xl space-y-4">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-sm font-bold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-users-viewfinder text-amber-500"></i> Besökslogg & Riktiga IP-Adresser
+                        </h3>
+                        <button onclick="clearVisitorLogs()" class="text-xs text-gray-400 hover:text-white">Rensa logg</button>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs text-gray-300">
+                            <thead class="bg-darkbg text-gray-400 uppercase font-mono border-b border-darkcardborder">
+                                <tr>
+                                    <th class="p-3">IP-Adress</th>
+                                    <th class="p-3">Tidsstämpel</th>
+                                    <th class="p-3">Aktivitet</th>
+                                    <th class="p-3">Status</th>
+                                    <th class="p-3 text-right">Åtgärd</th>
+                                </tr>
+                            </thead>
+                            <tbody id="visitor-log-tbody" class="divide-y divide-darkcardborder">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+
         </section>
 
     </main>
@@ -397,17 +506,61 @@
 
     <script>
         /* -------------------------------------------------------------
-           1. HARDCODED GROQ API KEY & CONFIGURATION
+           1. HARDCODED GROQ API KEY & ADMIN PASSWORD
         ------------------------------------------------------------- */
         const GROQ_API_KEY = "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";
         const GROQ_ENDPOINT = "https://api.groq.com/openai/v1/chat/completions";
         const GROQ_MODEL = "llama-3.3-70b-versatile";
+        const ADMIN_PASS = 'DNOWFI"¤%RU(=EQfew23¨öló312';
 
         /* -------------------------------------------------------------
-           2. EXAM QUESTION DATABASE (STRICTLY BALANCED PER GRADE)
+           2. CLIENT IP & ACCESS CONTROL (SECURITY)
+        ------------------------------------------------------------- */
+        let currentClientIP = 'Okänd IP';
+        let isAdminLoggedIn = false;
+
+        async function initClientIP() {
+            try {
+                const res = await fetch('https://api.ipify.org?format=json');
+                const data = await res.json();
+                currentClientIP = data.ip;
+            } catch (e) {
+                console.warn('Gick inte att hämta IP från ipify, använder fallback');
+                currentClientIP = '127.0.0.1';
+            }
+
+            logVisitorActivity(currentClientIP, 'Sidvisning');
+            checkIfIPBlocked();
+        }
+
+        function checkIfIPBlocked() {
+            const blockedIPs = JSON.parse(localStorage.getItem('blocked_ips') || '[]');
+            if (blockedIPs.includes(currentClientIP)) {
+                document.getElementById('blocked-ip-display').innerText = currentClientIP;
+                document.getElementById('blocked-screen').classList.remove('hidden');
+            } else {
+                document.getElementById('blocked-screen').classList.add('hidden');
+            }
+        }
+
+        function logVisitorActivity(ip, activity) {
+            let logs = JSON.parse(localStorage.getItem('visitor_logs') || '[]');
+            logs.unshift({
+                ip: ip,
+                time: new Date().toLocaleString('sv-SE'),
+                activity: activity
+            });
+            // Keep max 50 logs
+            if (logs.length > 50) logs = logs.slice(0, 50);
+            localStorage.setItem('visitor_logs', JSON.stringify(logs));
+        }
+
+
+        /* -------------------------------------------------------------
+           3. EXAM QUESTION DATABASE
         ------------------------------------------------------------- */
         const quizQuestions = [
-            // --- E-PROV QUESTIONS ---
+            // E-PROV
             {
                 id: 101,
                 level: 'E',
@@ -446,12 +599,12 @@
                 examType: 'E',
                 type: 'text',
                 title: 'Kortfråga: Valenselektroner för Natrium',
-                desc: 'Natrium (Na) har atomnummer 11. Hur många valenselektroner (elektroner i det yttersta skalet) har natrium, och i vilken grupp finns ämnet?',
-                modelAnswer: 'Natrium har 1 valenselektron i sitt yttersta skal (elektronfördelning 2, 8, 1) och tillhör därför grupp 1 (alkalimetallerna).',
-                rubricKeywords: ['1', 'valenselektron', 'grupp 1', 'yttersta']
+                desc: 'Natrium (Na) har atomnummer 11. Hur många valenselektroner har natrium, och i vilken grupp finns ämnet?',
+                modelAnswer: 'Natrium har 1 valenselektron i sitt yttersta skal (elektronfördelning 2, 8, 1) och tillhör grupp 1.',
+                rubricKeywords: ['1', 'valenselektron', 'grupp 1']
             },
 
-            // --- C-PROV QUESTIONS ---
+            // C-PROV
             {
                 id: 201,
                 level: 'C',
@@ -466,7 +619,7 @@
                     'Exakt samma antal protoner'
                 ],
                 correct: 1,
-                explanation: 'Ämnen i samma grupp har lika många valenselektroner vilket ger dem liknande reaktionsegenskaper.'
+                explanation: 'Ämnen i samma grupp har lika många valenselektroner.'
             },
             {
                 id: 202,
@@ -475,8 +628,8 @@
                 type: 'text',
                 title: 'Varför är ädelgaser reaktionströga?',
                 desc: 'Förklara med kemiska begrepp varför ädelgaserna i grupp 18 sällan reagerar med andra ämnen.',
-                modelAnswer: 'Ädelgaser har sitt yttersta elektronskal helt fullt (ädelgasstruktur / oktettregeln). De är därför kemiskt stabila och har inget behov av att avge, ta upp eller dela elektroner.',
-                rubricKeywords: ['fullt', 'skal', 'ädelgasstruktur', 'stabil', 'valenselektroner', 'oktett']
+                modelAnswer: 'Ädelgaser har sitt yttersta elektronskal helt fullt (ädelgasstruktur). De är kemiskt stabila.',
+                rubricKeywords: ['fullt', 'skal', 'ädelgasstruktur', 'stabil', 'valenselektroner']
             },
             {
                 id: 203,
@@ -485,20 +638,20 @@
                 type: 'text',
                 title: 'Skillnad mellan atom och jon',
                 desc: 'Beskriv skillnaden på en neutral natriumatom (Na) och en natriumjon (Na+). Förklara vad som hänt med elektronerna.',
-                modelAnswer: 'En neutral natriumatom har lika många protoner som elektroner (11 av varje). För att få fullt yttersta skal lämnar den ifrån sig sin enda valenselektron. Den får då ett överskott på 1 positiv laddning i kärnan och blir en positivt laddad jon (Na+).',
-                rubricKeywords: ['laddad', 'elektron', 'lämnar', 'positiv', 'protoner', 'överskott', 'jon']
+                modelAnswer: 'Natriumatomen har 11 protoner och 11 elektroner. Den lämnar ifrån sig sin valenselektron för att få fullt skal och blir en positivt laddad jon (Na+).',
+                rubricKeywords: ['laddad', 'elektron', 'lämnar', 'positiv', 'jon']
             },
 
-            // --- A-PROV QUESTIONS (100% WRITTEN ESSAY) ---
+            // A-PROV
             {
                 id: 301,
                 level: 'A',
                 examType: 'A',
                 type: 'text',
                 title: 'Reaktivitetstrend i Grupp 1 (Alkalimetaller)',
-                desc: 'Jämför Natrium (Na, atomnr 11) och Kalium (K, atomnr 19). Vilket ämne reagerar HÄFTIGAST med vatten och VARFÖR? Resonera i flera led med begreppen elektronskal, avstånd till atomkärnan och attraktionskraft.',
-                modelAnswer: 'Kalium reagerar häftigare än natrium. Båda har 1 valenselektron, men kalium har 4 elektronskal medan natrium har 3. Det större avståndet mellan den positivt laddade atomkärnan och valenselektronen i kalium gör att den elektriska attraktionskraften blir svagare. Därför släpper kalium sin valenselektron lättare för att bilda en jon.',
-                rubricKeywords: ['kalium', 'skal', 'avstånd', 'kärna', 'attraktionskraft', 'svagare', 'släpper', 'lättare']
+                desc: 'Jämför Natrium (Na) och Kalium (K). Vilket ämne reagerar HÄFTIGAST med vatten och VARFÖR? Resonera med begreppen elektronskal, avstånd till atomkärnan och attraktionskraft.',
+                modelAnswer: 'Kalium reagerar häftigare. Kalium har fler elektronskal vilket gör att avståndet mellan kärnan och valenselektronen är större. Attraktionskraften blir svagare och elektron släpps lättare.',
+                rubricKeywords: ['kalium', 'skal', 'avstånd', 'kärna', 'attraktionskraft', 'svagare', 'släpper']
             },
             {
                 id: 302,
@@ -506,17 +659,17 @@
                 examType: 'A',
                 type: 'text',
                 title: 'Jonbindning och Salters bildning (NaCl)',
-                desc: 'Redogör noggrant för vad som händer när natrium (Na) och klor (Cl) reagerar och bildar koksalt (NaCl). Beskriv elektronövergången, jonbildningen och varför jonerna hålls ihop.',
-                modelAnswer: 'Natrium har 1 valenselektron och vill lämna den för att få ädelgasstruktur. Klor har 7 valenselektroner och behöver 1 elektron för fullt skal. Natrium avger sin valenselektron till klor. Natrium blir en positiv jon (Na+) och klor blir en negativ kloridjon (Cl-). De motställda laddningarna dras till varandra med starka elektrostatiska krafter i en jonbindning.',
-                rubricKeywords: ['avger', 'tar upp', 'valenselektron', 'positiv', 'negativ', 'jonbindning', 'laddningar', 'ädelgasstruktur']
+                desc: 'Redogör för vad som händer när natrium (Na) och klor (Cl) reagerar och bildar koksalt (NaCl). Beskriv elektronövergången och jonbindningen.',
+                modelAnswer: 'Natrium avger sin valenselektron till klor. Natrium blir positiv (Na+) och klor blir negativ (Cl-). De motställda laddningarna dras till varandra i en jonbindning.',
+                rubricKeywords: ['avger', 'tar upp', 'valenselektron', 'positiv', 'negativ', 'jonbindning']
             }
         ];
 
 
         /* -------------------------------------------------------------
-           3. STATE & TAB NAVIGATION
+           4. STATE & NAVIGATION
         ------------------------------------------------------------- */
-        let activeExamType = 'E'; // 'E', 'C', 'A', 'ALL'
+        let activeExamType = 'E';
         let currentQuestions = [];
         let currentQIdx = 0;
         let userAnswers = {};
@@ -527,18 +680,22 @@
             const ptableTab = document.getElementById('tab-ptable');
             const quizTab = document.getElementById('tab-quiz');
             const historyTab = document.getElementById('tab-history');
+            const adminTab = document.getElementById('tab-admin');
 
             const ptableBtn = document.getElementById('nav-ptable-btn');
             const quizBtn = document.getElementById('nav-quiz-btn');
             const historyBtn = document.getElementById('nav-history-btn');
+            const adminBtn = document.getElementById('nav-admin-btn');
 
             ptableTab.classList.add('hidden');
             quizTab.classList.add('hidden');
             historyTab.classList.add('hidden');
+            adminTab.classList.add('hidden');
 
             ptableBtn.className = "px-4 py-1.5 rounded-lg text-sm font-semibold text-gray-400 hover:text-white transition-all flex items-center gap-2";
             quizBtn.className = "px-4 py-1.5 rounded-lg text-sm font-semibold text-gray-400 hover:text-white transition-all flex items-center gap-2";
             historyBtn.className = "px-4 py-1.5 rounded-lg text-sm font-semibold text-gray-400 hover:text-white transition-all flex items-center gap-2";
+            adminBtn.className = "px-3 py-1.5 rounded-lg text-sm font-semibold text-amber-500 hover:text-white transition-all flex items-center gap-2 border border-amber-500/30";
 
             if (tab === 'ptable') {
                 ptableTab.classList.remove('hidden');
@@ -550,6 +707,12 @@
                 historyTab.classList.remove('hidden');
                 historyBtn.className = "px-4 py-1.5 rounded-lg text-sm font-semibold transition-all flex items-center gap-2 bg-amber-600 text-black shadow-md font-bold";
                 renderHistory();
+            } else if (tab === 'admin') {
+                adminTab.classList.remove('hidden');
+                adminBtn.className = "px-3 py-1.5 rounded-lg text-sm font-semibold transition-all flex items-center gap-2 bg-amber-600 text-black shadow-md font-bold border-0";
+                if (isAdminLoggedIn) {
+                    renderAdminDashboard();
+                }
             }
         }
 
@@ -569,7 +732,7 @@
 
 
         /* -------------------------------------------------------------
-           4. FALLBACK PERIODIC TABLE ENGINE
+           5. FALLBACK PTABLE GRID
         ------------------------------------------------------------- */
         const fallbackElements = [
             { num: 1, sym: 'H', name: 'Väte', p: 1, g: 1 },
@@ -591,11 +754,7 @@
             { num: 17, sym: 'Cl', name: 'Klor', p: 3, g: 17 },
             { num: 18, sym: 'Ar', name: 'Argon', p: 3, g: 18 },
             { num: 19, sym: 'K', name: 'Kalium', p: 4, g: 1 },
-            { num: 20, sym: 'Ca', name: 'Kalcium', p: 4, g: 2 },
-            { num: 26, sym: 'Fe', name: 'Järn', p: 4, g: 8 },
-            { num: 29, sym: 'Cu', name: 'Koppar', p: 4, g: 11 },
-            { num: 35, sym: 'Br', name: 'Brom', p: 4, g: 17 },
-            { num: 36, sym: 'Kr', name: 'Krypton', p: 4, g: 18 }
+            { num: 20, sym: 'Ca', name: 'Kalcium', p: 4, g: 2 }
         ];
 
         function renderFallbackTable() {
@@ -628,10 +787,11 @@
 
 
         /* -------------------------------------------------------------
-           5. EXAM ENGINE LOGIC
+           6. EXAM LOGIC
         ------------------------------------------------------------- */
         function startQuiz(examType) {
             activeExamType = examType;
+            logVisitorActivity(currentClientIP, `Startade ${examType}-Prov`);
 
             if (examType === 'ALL') {
                 currentQuestions = [...quizQuestions];
@@ -673,7 +833,6 @@
 
             document.getElementById('q-tag').innerText = `Fråga ${currentQIdx + 1} • ${q.level}-Nivå`;
             document.getElementById('q-type-badge').innerText = q.type === 'mc' ? 'Kryssfråga' : 'Skrivfråga';
-
             document.getElementById('q-title').innerText = q.title;
 
             const descElem = document.getElementById('q-description');
@@ -754,7 +913,7 @@
 
 
         /* -------------------------------------------------------------
-           6. GROQ AI INTEGRATION & GRADING LOGIC
+           7. GROQ AI EVALUATOR & RESULT PROCESSING
         ------------------------------------------------------------- */
         async function finishAndGradeExam() {
             clearInterval(timerInterval);
@@ -762,7 +921,8 @@
             document.getElementById('quiz-active-screen').classList.add('hidden');
             document.getElementById('quiz-loading-screen').classList.remove('hidden');
 
-            // Format payload for Groq AI
+            logVisitorActivity(currentClientIP, `Lämnade in ${activeExamType}-Prov för rättning`);
+
             const formattedExamData = currentQuestions.map(q => {
                 let userVal = userAnswers[q.id];
                 let displayAns = '';
@@ -784,25 +944,23 @@
 
             const promptText = `RÄTTA PROVEN MED BETYG 8ANS ANVÄNDERNS SVAR OCH FRÅGOR VILKET PROV ETC
 
-Provtyp som elev valt: ${activeExamType}-Prov (Max uppnåeligt betyg på detta prov: ${activeExamType === 'E' ? 'E' : (activeExamType === 'C' ? 'C' : 'A')})
+Provtyp: ${activeExamType}-Prov (Max uppnåeligt betyg: ${activeExamType === 'E' ? 'E' : (activeExamType === 'C' ? 'C' : 'A')})
 
-Inlämnade frågor och elevsvar:
+Data:
 ${JSON.stringify(formattedExamData, null, 2)}
 
 INSTRUKTIONER FÖR RÄTTNING (LGR22 KEMI ÅK 8):
-1. Bedöm elevens skriftliga svar STRIKT efter kemiska facktermer (elektronskal, valenselektroner, attraktionskraft, joner, ädelgasstruktur, oktettregeln).
-2. Om ett skrivsvar är för kort, osammanhängande eller saknar viktiga kemiska ord ska poäng avdras!
-3. Räkna ut poäng för varje fråga: E-frågor ger max 1p, C-frågor max 2p, A-frågor max 3p.
-4. Tilldela ett slutbetyg (F, E, D, C, B, A). TÄNK PÅ ATT maxbetyget för ett E-prov är E, och maxbetyget för ett C-prov är C!
-5. Skapa en begreppsanalys över kemiska ord eleven använde eller missade.
-6. Ge råd för vad som krävs för att nå nästa betygssteg.
+1. Bedöm elevens skriftliga svar STRIKT efter kemiska facktermer (elektronskal, valenselektroner, attraktionskraft, joner, ädelgasstruktur).
+2. Tilldela poäng per fråga (E: max 1p, C: max 2p, A: max 3p).
+3. Maxbetyg för E-prov är E, maxbetyg för C-prov är C!
+4. Ge begreppsanalys och råd för nästa betygssteg.
 
-RETURNERA ENBART VALID JSON I FÖLJANDE EXAKTA STRUKTUR UTAN MARKDOWN CODEBLOCKS:
+RETURNERA ENBART VALID JSON I FÖLJANDE FORM UTAN MARKDOWN:
 {
     "finalGrade": "E",
     "totalScore": 4,
     "maxPossibleScore": 6,
-    "conceptAnalysis": "Analystext här...",
+    "conceptAnalysis": "Analystext...",
     "nextStepAdvice": "Träna mer på...",
     "evaluations": [
         {
@@ -824,14 +982,8 @@ RETURNERA ENBART VALID JSON I FÖLJANDE EXAKTA STRUKTUR UTAN MARKDOWN CODEBLOCKS
                     body: JSON.stringify({
                         model: GROQ_MODEL,
                         messages: [
-                            {
-                                role: "system",
-                                content: "Du är en examinerande kemilärare i den svenska grundskolan (Lgr22 åk 8). Du ska alltid svara med enbart strikt JSON utan omslutande kodblock."
-                            },
-                            {
-                                role: "user",
-                                content: promptText
-                            }
+                            { role: "system", content: "Du är en examinerande kemilärare i åk 8. Svara endast med JSON." },
+                            { role: "user", content: promptText }
                         ],
                         temperature: 0.2
                     })
@@ -839,21 +991,18 @@ RETURNERA ENBART VALID JSON I FÖLJANDE EXAKTA STRUKTUR UTAN MARKDOWN CODEBLOCKS
 
                 const data = await response.json();
                 const content = data.choices[0].message.content.trim();
-
-                // Clean potential markdown quotes
                 const cleanJson = content.replace(/```json|```/g, '').trim();
                 const aiResult = JSON.parse(cleanJson);
 
                 processAndSaveResults(aiResult);
 
             } catch (err) {
-                console.error("Groq AI API error, falling back to local evaluator:", err);
+                console.error("Groq AI API error, running local evaluator:", err);
                 const fallbackRes = fallbackLocalGrading();
                 processAndSaveResults(fallbackRes);
             }
         }
 
-        /* Local Fallback in case API fails */
         function fallbackLocalGrading() {
             let total = 0;
             let max = 0;
@@ -870,7 +1019,7 @@ RETURNERA ENBART VALID JSON I FÖLJANDE EXAKTA STRUKTUR UTAN MARKDOWN CODEBLOCKS
                         p = maxP;
                         fb = 'Korrekt svar!';
                     } else {
-                        fb = `Felaktigt. Rätt svar var: ${q.options[q.correct]}`;
+                        fb = `Rätt svar var: ${q.options[q.correct]}`;
                     }
                 } else {
                     const txt = (userVal || '').toLowerCase();
@@ -881,7 +1030,7 @@ RETURNERA ENBART VALID JSON I FÖLJANDE EXAKTA STRUKTUR UTAN MARKDOWN CODEBLOCKS
                     if (hits >= Math.ceil(kws.length * 0.7)) p = maxP;
                     else if (hits > 0) p = Math.max(1, maxP - 1);
 
-                    fb = p > 0 ? `Svaret innehåller en del begrepp. Jämför med mönstersvaret.` : `Saknar nödvändiga kemiska begrepp.`;
+                    fb = p > 0 ? `Innehåller vissa begrepp.` : `Saknar centrala kemibegrepp.`;
                 }
 
                 total += p;
@@ -902,18 +1051,16 @@ RETURNERA ENBART VALID JSON I FÖLJANDE EXAKTA STRUKTUR UTAN MARKDOWN CODEBLOCKS
                 finalGrade: g,
                 totalScore: total,
                 maxPossibleScore: max,
-                conceptAnalysis: "Lokal utvärdering genomfördes. Du har besvarat frågorna med varierande precision i begreppsanvändningen.",
-                nextStepAdvice: "För högre betyg, använd konsekvent begrepp som elektronskal, valenselektroner och joner.",
+                conceptAnalysis: "Lokal utvärdering genomfördes för dina svar.",
+                nextStepAdvice: "Repetera begrepp som elektronskal och valenselektroner.",
                 evaluations
             };
         }
 
-        /* Render Results and save to LocalStorage */
         function processAndSaveResults(aiResult) {
             document.getElementById('quiz-loading-screen').classList.add('hidden');
             document.getElementById('quiz-result-screen').classList.remove('hidden');
 
-            // Apply level limits strictly
             let finalGrade = aiResult.finalGrade;
             if (activeExamType === 'E' && finalGrade !== 'F') finalGrade = 'E';
             if (activeExamType === 'C' && ['A', 'B'].includes(finalGrade)) finalGrade = 'C';
@@ -923,18 +1070,17 @@ RETURNERA ENBART VALID JSON I FÖLJANDE EXAKTA STRUKTUR UTAN MARKDOWN CODEBLOCKS
             const gradeElem = document.getElementById('result-grade-val');
             gradeElem.innerText = finalGrade;
 
-            if (finalGrade === 'A' || finalGrade === 'B') gradeElem.className = 'text-3xl font-black text-purple-400';
-            else if (finalGrade === 'C' || finalGrade === 'D') gradeElem.className = 'text-3xl font-black text-blue-400';
+            if (['A','B'].includes(finalGrade)) gradeElem.className = 'text-3xl font-black text-purple-400';
+            else if (['C','D'].includes(finalGrade)) gradeElem.className = 'text-3xl font-black text-blue-400';
             else if (finalGrade === 'E') gradeElem.className = 'text-3xl font-black text-emerald-400';
             else gradeElem.className = 'text-3xl font-black text-red-500';
 
             document.getElementById('result-summary-text').innerText = 
-                `Provtyp: ${activeExamType === 'ALL' ? 'Blandat' : activeExamType + '-Prov'} • Rättat med Groq AI. Max uppnåeligt betyg: ${activeExamType === 'E' ? 'E' : (activeExamType === 'C' ? 'C' : 'A')}.`;
+                `Provtyp: ${activeExamType === 'ALL' ? 'Blandat' : activeExamType + '-Prov'} • Maxbetyg: ${activeExamType === 'E' ? 'E' : (activeExamType === 'C' ? 'C' : 'A')}.`;
 
             document.getElementById('concept-analysis-box').innerText = aiResult.conceptAnalysis || 'Ingen analys tillgänglig.';
-            document.getElementById('next-step-box').innerHTML = `<i class="fa-solid fa-lightbulb mr-1"></i> <strong>Nästa Betygssteg:</strong> ${aiResult.nextStepAdvice || 'Fortsätt öva på kemiska begrepp.'}`;
+            document.getElementById('next-step-box').innerHTML = `<i class="fa-solid fa-lightbulb mr-1"></i> <strong>Nästa Betygssteg:</strong> ${aiResult.nextStepAdvice || 'Öva vidare.'}`;
 
-            // Render questions list
             const feedbackList = document.getElementById('result-feedback-list');
             feedbackList.innerHTML = '';
 
@@ -964,10 +1110,10 @@ RETURNERA ENBART VALID JSON I FÖLJANDE EXAKTA STRUKTUR UTAN MARKDOWN CODEBLOCKS
                 feedbackList.appendChild(card);
             });
 
-            // SAVE TO LOCALSTORAGE DATABASE
             saveExamToDatabase({
                 id: Date.now(),
                 date: new Date().toLocaleString('sv-SE'),
+                userIP: currentClientIP,
                 examType: activeExamType,
                 grade: finalGrade,
                 score: `${aiResult.totalScore} / ${aiResult.maxPossibleScore}`,
@@ -975,7 +1121,6 @@ RETURNERA ENBART VALID JSON I FÖLJANDE EXAKTA STRUKTUR UTAN MARKDOWN CODEBLOCKS
             });
         }
 
-        /* LocalStorage Database Functions */
         function saveExamToDatabase(record) {
             let history = JSON.parse(localStorage.getItem('kemi_prov_history') || '[]');
             history.unshift(record);
@@ -987,7 +1132,7 @@ RETURNERA ENBART VALID JSON I FÖLJANDE EXAKTA STRUKTUR UTAN MARKDOWN CODEBLOCKS
             let history = JSON.parse(localStorage.getItem('kemi_prov_history') || '[]');
 
             if (history.length === 0) {
-                listElem.innerHTML = `<div class="p-8 text-center text-xs text-gray-500 bg-darkbg rounded-xl border border-darkcardborder">Inga inlämnade prov finns sparade ännu.</div>`;
+                listElem.innerHTML = `<div class="p-8 text-center text-xs text-gray-500 bg-darkbg rounded-xl border border-darkcardborder">Inga inlämnade prov sparade i databasen.</div>`;
                 return;
             }
 
@@ -1022,7 +1167,7 @@ RETURNERA ENBART VALID JSON I FÖLJANDE EXAKTA STRUKTUR UTAN MARKDOWN CODEBLOCKS
         }
 
         function clearHistory() {
-            if (confirm("Vill du verkligen rensa hela provhistoriken?")) {
+            if (confirm("Vill du verkligen rensa historiken?")) {
                 localStorage.removeItem('kemi_prov_history');
                 renderHistory();
             }
@@ -1032,6 +1177,140 @@ RETURNERA ENBART VALID JSON I FÖLJANDE EXAKTA STRUKTUR UTAN MARKDOWN CODEBLOCKS
             document.getElementById('quiz-result-screen').classList.add('hidden');
             document.getElementById('quiz-select-screen').classList.remove('hidden');
         }
+
+
+        /* -------------------------------------------------------------
+           8. ADMIN PANEL & IP MANAGEMENT LOGIC
+        ------------------------------------------------------------- */
+        function loginAdmin() {
+            const input = document.getElementById('admin-password-input').value;
+            const err = document.getElementById('admin-login-error');
+
+            if (input === ADMIN_PASS) {
+                isAdminLoggedIn = true;
+                err.classList.add('hidden');
+                renderAdminDashboard();
+            } else {
+                err.innerText = "Felaktigt administratörslösenord!";
+                err.classList.remove('hidden');
+            }
+        }
+
+        function logoutAdmin() {
+            isAdminLoggedIn = false;
+            document.getElementById('admin-login-screen').classList.remove('hidden');
+            document.getElementById('admin-dashboard').classList.add('hidden');
+            document.getElementById('admin-password-input').value = '';
+        }
+
+        function renderAdminDashboard() {
+            document.getElementById('admin-login-screen').classList.add('hidden');
+            document.getElementById('admin-dashboard').classList.remove('hidden');
+
+            renderBlockedIPsList();
+            renderVisitorLogTable();
+        }
+
+        function renderBlockedIPsList() {
+            const blockedIPs = JSON.parse(localStorage.getItem('blocked_ips') || '[]');
+            const container = document.getElementById('blocked-ips-list');
+            document.getElementById('blocked-count').innerText = blockedIPs.length;
+
+            if (blockedIPs.length === 0) {
+                container.innerHTML = `<span class="text-xs text-gray-500 italic">Inga blockerade IP-adresser.</span>`;
+                return;
+            }
+
+            container.innerHTML = '';
+            blockedIPs.forEach(ip => {
+                const tag = document.createElement('div');
+                tag.className = "inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-red-500/10 border border-red-500/30 text-xs font-mono text-red-400";
+                tag.innerHTML = `
+                    <span>${ip}</span>
+                    <button onclick="unblockIP('${ip}')" class="hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+                `;
+                container.appendChild(tag);
+            });
+        }
+
+        function renderVisitorLogTable() {
+            const logs = JSON.parse(localStorage.getItem('visitor_logs') || '[]');
+            const blockedIPs = JSON.parse(localStorage.getItem('blocked_ips') || '[]');
+            const tbody = document.getElementById('visitor-log-tbody');
+
+            tbody.innerHTML = '';
+            if (logs.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-gray-500">Inga besök registrerade.</td></tr>`;
+                return;
+            }
+
+            logs.forEach(log => {
+                const isBlocked = blockedIPs.includes(log.ip);
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-darkbg/50";
+
+                tr.innerHTML = `
+                    <td class="p-3 font-mono font-bold text-amber-500">${log.ip} ${log.ip === currentClientIP ? '<span class="text-[10px] text-emerald-400">(Du)</span>' : ''}</td>
+                    <td class="p-3 text-gray-400">${log.time}</td>
+                    <td class="p-3 text-white">${log.activity}</td>
+                    <td class="p-3">
+                        <span class="px-2 py-0.5 rounded text-[10px] font-bold ${isBlocked ? 'bg-red-500/20 text-red-400 border border-red-500/30' : 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'}">
+                            ${isBlocked ? 'BLOCKERAD' : 'AKTIV'}
+                        </span>
+                    </td>
+                    <td class="p-3 text-right">
+                        ${
+                            isBlocked 
+                            ? `<button onclick="unblockIP('${log.ip}')" class="px-2.5 py-1 rounded bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500 hover:text-black font-bold">Lås upp</button>`
+                            : `<button onclick="blockIP('${log.ip}')" class="px-2.5 py-1 rounded bg-red-500/20 text-red-400 hover:bg-red-500 hover:text-white font-bold">Blockera</button>`
+                        }
+                    </td>
+                `;
+
+                tbody.appendChild(tr);
+            });
+        }
+
+        function blockIP(ip) {
+            let blockedIPs = JSON.parse(localStorage.getItem('blocked_ips') || '[]');
+            if (!blockedIPs.includes(ip)) {
+                blockedIPs.push(ip);
+                localStorage.setItem('blocked_ips', JSON.stringify(blockedIPs));
+            }
+            renderAdminDashboard();
+            checkIfIPBlocked();
+        }
+
+        function blockManualIP() {
+            const input = document.getElementById('manual-block-ip');
+            const ip = input.value.trim();
+            if (ip) {
+                blockIP(ip);
+                input.value = '';
+            }
+        }
+
+        function unblockIP(ip) {
+            let blockedIPs = JSON.parse(localStorage.getItem('blocked_ips') || '[]');
+            blockedIPs = blockedIPs.filter(b => b !== ip);
+            localStorage.setItem('blocked_ips', JSON.stringify(blockedIPs));
+            renderAdminDashboard();
+            checkIfIPBlocked();
+        }
+
+        function clearVisitorLogs() {
+            localStorage.removeItem('visitor_logs');
+            renderVisitorLogTable();
+        }
+
+
+        /* -------------------------------------------------------------
+           9. INITIALIZATION ON WINDOW LOAD
+        ------------------------------------------------------------- */
+        window.onload = function() {
+            initClientIP();
+            renderFallbackTable();
+        };
     </script>
 </body>
 </html>
