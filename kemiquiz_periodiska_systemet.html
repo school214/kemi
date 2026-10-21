@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="sv" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ptable & Kemi Prov - Årskurs 8</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        darkbg: '#0a0a0c',
+                        darkcard: '#121316',
+                        darkcardborder: '#242731',
+                        amber: {
+                            500: '#f59e0b',
+                            600: '#d97706',
+                            700: '#b45309',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0a0a0c;
+            color: #f3f4f6;
+        }
+
+        /* Glow effects */
+        .glow-amber {
+            box-shadow: 0 0 20px rgba(217, 119, 6, 0.25);
+        }
+        
+        .ptable-grid {
+            display: grid;
+            grid-template-columns: repeat(18, minmax(0, 1fr));
+            gap: 2px;
+        }
+
+        .element-card {
+            aspect-ratio: 1 / 1;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .element-card:hover {
+            transform: scale(1.15);
+            z-index: 30;
+            box-shadow: 0 0 12px rgba(245, 158, 11, 0.5);
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0a0a0c;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #242731;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #d97706;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col bg-[#0a0a0c] text-gray-100 antialiased">
+
+    <!-- Header Navigation -->
+    <header class="border-b border-darkcardborder bg-[#0f1014]/90 backdrop-blur sticky top-0 z-50 px-4 py-3">
+        <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 to-amber-700 flex items-center justify-center text-darkbg font-bold text-xl shadow-lg shadow-amber-600/30">
+                    <i class="fa-solid fa-flask"></i>
+                </div>
+                <div>
+                    <h1 class="font-extrabold text-lg sm:text-xl tracking-tight text-white flex items-center gap-2">
+                        Ptable & Kemi Prov <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-500 border border-amber-500/30">Åk 8 Lgr22</span>
+                    </h1>
+                    <p class="text-xs text-gray-400 hidden sm:block">Interaktiva Ptable.com & Strikt Betygsatt Mini-Prov</p>
+                </div>
+            </div>
+
+            <!-- Tab Buttons -->
+            <nav class="flex items-center space-x-2 bg-darkcard p-1 rounded-xl border border-darkcardborder">
+                <button id="nav-ptable-btn" onclick="switchTab('ptable')" class="px-4 py-1.5 rounded-lg text-sm font-semibold transition-all flex items-center gap-2 bg-amber-600 text-white shadow-md">
+                    <i class="fa-solid fa-table-cells"></i>
+                    <span>Periodiska Systemet (Ptable)</span>
+                </button>
+                <button id="nav-quiz-btn" onclick="switchTab('quiz')" class="px-4 py-1.5 rounded-lg text-sm font-semibold text-gray-400 hover:text-white transition-all flex items-center gap-2">
+                    <i class="fa-solid fa-file-signature"></i>
+                    <span>Kemi Mini-Prov</span>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Workspace -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-2 sm:px-4 py-6">
+
+        <!-- TAB 1: PTABLE INTEGRATION VIEW -->
+        <section id="tab-ptable" class="space-y-4">
+            
+            <!-- Controls Bar for Ptable iframe -->
+            <div class="bg-darkcard rounded-2xl p-4 border border-darkcardborder shadow-xl flex flex-wrap items-center justify-between gap-4">
+                <div class="flex items-center space-x-2 text-xs text-gray-300">
+                    <span class="inline-flex items-center justify-center w-2 h-2 rounded-full bg-emerald-500 animate-pulse mr-1"></span>
+                    <span class="font-bold text-white">Ptable.com Extension View</span>
+                    <span class="text-gray-500">|</span>
+                    <span class="text-gray-400">Officiellt interaktivt periodiskt system på svenska</span>
+                </div>
+
+                <div class="flex items-center gap-2">
+                    <button onclick="togglePtableSource()" id="toggle-source-btn" class="px-3 py-1.5 rounded-lg bg-darkbg border border-darkcardborder text-xs font-semibold text-gray-300 hover:text-white hover:border-amber-500 transition-all flex items-center gap-1.5">
+                        <i class="fa-solid fa-arrows-rotate"></i> Växla Vy (Iframe / Inbyggd)
+                    </button>
+                    <a href="https://ptable.com/?lang=sv" target="_blank" class="px-3 py-1.5 rounded-lg bg-amber-600/20 text-amber-500 hover:bg-amber-600 hover:text-white border border-amber-500/40 text-xs font-semibold transition-all flex items-center gap-1.5">
+                        <i class="fa-solid fa-arrow-up-right-from-square"></i> Öppna ptable.com
+                    </a>
+                </div>
+            </div>
+
+            <!-- Main Iframe Container -->
+            <div id="iframe-container" class="w-full h-[750px] bg-darkcard rounded-2xl border border-darkcardborder shadow-2xl overflow-hidden relative">
+                <iframe id="ptable-iframe" src="https://ptable.com/?lang=sv" class="w-full h-full border-0"></iframe>
+            </div>
+
+            <!-- Fallback Built-in Table Container (Hidden by default) -->
+            <div id="fallback-container" class="hidden bg-darkcard rounded-2xl p-4 border border-darkcardborder shadow-2xl overflow-x-auto space-y-4">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-sm font-bold text-amber-500 flex items-center gap-2">
+                        <i class="fa-solid fa-atom"></i> Inbyggd Snabbvy (Svenska)
+                    </h3>
+                    <span class="text-xs text-gray-400">Klicka på ett ämne för detaljer</span>
+                </div>
+                <div class="min-w-[900px]">
+                    <div id="ptable-grid" class="ptable-grid"></div>
+                </div>
+            </div>
+
+        </section>
+
+
+        <!-- TAB 2: KEMI MINI-PROV -->
+        <section id="tab-quiz" class="hidden space-y-6">
+            
+            <!-- LEVEL SELECTION SCREEN -->
+            <div id="quiz-select-screen" class="max-w-4xl mx-auto bg-darkcard rounded-2xl p-6 sm:p-8 border border-darkcardborder shadow-2xl space-y-8">
+                
+                <div class="text-center space-y-3">
+                    <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-amber-600/10 text-amber-500 text-3xl border border-amber-500/30 glow-amber">
+                        <i class="fa-solid fa-scroll"></i>
+                    </div>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold text-white">Kemi Prov - Periodiska Systemet (Åk 8)</h2>
+                    <p class="text-sm text-gray-400 max-w-xl mx-auto">
+                        Välj provnivå nedan. Provets maxbetyg är strikt begränsat till den valda nivån enligt Lgr22.
+                    </p>
+                </div>
+
+                <!-- Level Cards Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    
+                    <!-- E-PROV -->
+                    <button onclick="startQuiz('E')" class="p-6 rounded-2xl bg-[#0a0a0c] border border-emerald-500/30 hover:border-emerald-500 transition-all text-left group hover:shadow-lg hover:shadow-emerald-500/10 flex flex-col justify-between space-y-4">
+                        <div class="space-y-2">
+                            <div class="flex justify-between items-center">
+                                <span class="px-3 py-1 rounded-lg bg-emerald-500/20 text-emerald-400 font-extrabold text-xs tracking-wider uppercase">E-Prov (Grund)</span>
+                                <span class="text-xs font-mono text-gray-400">MaxBetyg: <strong class="text-emerald-400">E</strong></span>
+                            </div>
+                            <h3 class="font-bold text-lg text-white">Grundläggande Begrepp</h3>
+                            <p class="text-xs text-gray-400 leading-relaxed">
+                                Blandning av flervalsfrågor och korta skrivfrågor om atomnummer, perioder och kemiska tecken.
+                            </p>
+                        </div>
+                        <div class="pt-3 border-t border-darkcardborder flex justify-between items-center text-xs">
+                            <span class="text-emerald-400 font-semibold"><i class="fa-solid fa-[#50%] fa-pen-to-square mr-1"></i> Kryss + Skrivfrågor</span>
+                            <i class="fa-solid fa-arrow-right text-gray-500 group-hover:text-emerald-400 transition-colors"></i>
+                        </div>
+                    </button>
+
+                    <!-- C-PROV -->
+                    <button onclick="startQuiz('C')" class="p-6 rounded-2xl bg-[#0a0a0c] border border-blue-500/30 hover:border-blue-500 transition-all text-left group hover:shadow-lg hover:shadow-blue-500/10 flex flex-col justify-between space-y-4">
+                        <div class="space-y-2">
+                            <div class="flex justify-between items-center">
+                                <span class="px-3 py-1 rounded-lg bg-blue-500/20 text-blue-400 font-extrabold text-xs tracking-wider uppercase">C-Prov (Fördjupning)</span>
+                                <span class="text-xs font-mono text-gray-400">MaxBetyg: <strong class="text-blue-400">C</strong></span>
+                            </div>
+                            <h3 class="font-bold text-lg text-white">Fördjupad Förståelse</h3>
+                            <p class="text-xs text-gray-400 leading-relaxed">
+                                Huvudsakligen öppna SKRIVFRÅGOR om reaktivitet, valenselektroner, joner och ädelgasstruktur.
+                            </p>
+                        </div>
+                        <div class="pt-3 border-t border-darkcardborder flex justify-between items-center text-xs">
+                            <span class="text-blue-400 font-semibold"><i class="fa-solid fa-align-left mr-1"></i> MEST Skrivfrågor</span>
+                            <i class="fa-solid fa-arrow-right text-gray-500 group-hover:text-blue-400 transition-colors"></i>
+                        </div>
+                    </button>
+
+                    <!-- A-PROV -->
+                    <button onclick="startQuiz('A')" class="p-6 rounded-2xl bg-[#0a0a0c] border border-purple-500/30 hover:border-purple-500 transition-all text-left group hover:shadow-lg hover:shadow-purple-500/10 flex flex-col justify-between space-y-4">
+                        <div class="space-y-2">
+                            <div class="flex justify-between items-center">
+                                <span class="px-3 py-1 rounded-lg bg-purple-500/20 text-purple-400 font-extrabold text-xs tracking-wider uppercase">A-Prov (Resonemang)</span>
+                                <span class="text-xs font-mono text-gray-400">MaxBetyg: <strong class="text-purple-400">A</strong></span>
+                            </div>
+                            <h3 class="font-bold text-lg text-white">Avancerade Orsakssamband</h3>
+                            <p class="text-xs text-gray-400 leading-relaxed">
+                                <strong>100% SKRIVFRÅGOR!</strong> Komplexa resonemang i flera led kring attraktionskrafter, trender och bindningar.
+                            </p>
+                        </div>
+                        <div class="pt-3 border-t border-darkcardborder flex justify-between items-center text-xs">
+                            <span class="text-purple-400 font-semibold"><i class="fa-solid fa-file-lines mr-1"></i> ENBART Skrivfrågor</span>
+                            <i class="fa-solid fa-arrow-right text-gray-500 group-hover:text-purple-400 transition-colors"></i>
+                        </div>
+                    </button>
+
+                    <!-- BLANDAT PROV -->
+                    <button onclick="startQuiz('ALL')" class="p-6 rounded-2xl bg-[#0a0a0c] border border-amber-500/40 hover:border-amber-500 transition-all text-left group hover:shadow-lg hover:shadow-amber-500/10 flex flex-col justify-between space-y-4">
+                        <div class="space-y-2">
+                            <div class="flex justify-between items-center">
+                                <span class="px-3 py-1 rounded-lg bg-amber-500/20 text-amber-500 font-extrabold text-xs tracking-wider uppercase">Blandat Prov (E-A)</span>
+                                <span class="text-xs font-mono text-gray-400">MaxBetyg: <strong class="text-amber-500">A</strong></span>
+                            </div>
+                            <h3 class="font-bold text-lg text-white">Fullständigt Kemiprov</h3>
+                            <p class="text-xs text-gray-400 leading-relaxed">
+                                Alla frågetyper och svårighetsgrader samlade i ett komplett prov som prövar hela betygsskalan.
+                            </p>
+                        </div>
+                        <div class="pt-3 border-t border-darkcardborder flex justify-between items-center text-xs">
+                            <span class="text-amber-500 font-semibold"><i class="fa-solid fa-layer-group mr-1"></i> Alla Nivåer (E, C, A)</span>
+                            <i class="fa-solid fa-arrow-right text-gray-500 group-hover:text-amber-500 transition-colors"></i>
+                        </div>
+                    </button>
+
+                </div>
+
+                <!-- API Key Config -->
+                <div class="pt-4 border-t border-darkcardborder">
+                    <details class="text-xs text-gray-400 group">
+                        <summary class="cursor-pointer hover:text-gray-200 flex items-center justify-between font-medium">
+                            <span><i class="fa-solid fa-wand-magic-sparkles text-amber-500 mr-1.5"></i> Inställningar för AI-rättning (Gemini API)</span>
+                            <i class="fa-solid fa-chevron-down group-open:rotate-180 transition-transform"></i>
+                        </summary>
+                        <div class="mt-3 p-3 rounded-xl bg-darkbg border border-darkcardborder space-y-2">
+                            <p>Provet rättas med Gemini AI. Om ingen egen API-nyckel anges används den inbyggda strikta Lgr22-utvärderaren.</p>
+                            <input type="password" id="user-gemini-key" placeholder="Valfri Gemini API-nyckel..." 
+                                   class="w-full px-3 py-2 rounded-lg bg-darkcard border border-darkcardborder text-white placeholder-gray-500 focus:outline-none focus:border-amber-500 font-mono text-xs">
+                        </div>
+                    </details>
+                </div>
+
+            </div>
+
+
+            <!-- ACTIVE QUIZ SCREEN -->
+            <div id="quiz-active-screen" class="hidden max-w-3xl mx-auto space-y-6">
+                
+                <!-- Progress Header -->
+                <div class="bg-darkcard rounded-2xl p-4 border border-darkcardborder shadow-xl flex items-center justify-between gap-4">
+                    <div class="flex-1">
+                        <div class="flex justify-between text-xs font-medium text-gray-400 mb-1.5">
+                            <span id="quiz-progress-text">Fråga 1 av 5</span>
+                            <span id="quiz-level-badge" class="px-2.5 py-0.5 rounded bg-amber-500/20 text-amber-500 font-bold text-xs">E-Nivå</span>
+                        </div>
+                        <div class="w-full h-2.5 bg-darkbg rounded-full overflow-hidden">
+                            <div id="quiz-progress-bar" class="h-full bg-amber-600 transition-all duration-300"></div>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2 text-xs font-mono text-gray-300 bg-darkbg px-3 py-2 rounded-xl border border-darkcardborder">
+                        <i class="fa-regular fa-clock text-amber-500"></i>
+                        <span id="quiz-timer">00:00</span>
+                    </div>
+                </div>
+
+                <!-- Question Card -->
+                <div class="bg-darkcard rounded-2xl p-6 sm:p-8 border border-darkcardborder shadow-2xl space-y-6">
+                    <div>
+                        <div class="flex justify-between items-center mb-1">
+                            <span id="q-tag" class="text-xs font-bold text-amber-500 uppercase tracking-wider">Fråga</span>
+                            <span id="q-type-badge" class="text-[11px] font-semibold text-gray-400 bg-darkbg px-2.5 py-1 rounded-lg border border-darkcardborder">Skrivfråga</span>
+                        </div>
+                        <h3 id="q-title" class="text-xl font-bold text-white mt-1 leading-snug">Laddar...</h3>
+                        <p id="q-description" class="text-xs text-gray-400 mt-2 leading-relaxed hidden"></p>
+                    </div>
+
+                    <!-- Input / Options -->
+                    <div id="q-options-container" class="space-y-3"></div>
+
+                    <!-- Nav Buttons -->
+                    <div class="flex items-center justify-between pt-4 border-t border-darkcardborder">
+                        <button id="quiz-prev-btn" onclick="prevQuestion()" class="px-4 py-2 rounded-xl border border-darkcardborder text-xs font-semibold text-gray-400 hover:text-white transition-all flex items-center gap-2">
+                            <i class="fa-solid fa-arrow-left"></i> Föregående
+                        </button>
+                        <button id="quiz-next-btn" onclick="nextQuestion()" class="px-6 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-bold text-xs shadow-lg shadow-amber-600/20 transition-all flex items-center gap-2">
+                            <span>Nästa fråga</span> <i class="fa-solid fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+
+
+            <!-- LOADING / AI GRADING SCREEN -->
+            <div id="quiz-loading-screen" class="hidden max-w-xl mx-auto bg-darkcard rounded-2xl p-8 border border-darkcardborder shadow-2xl text-center space-y-4">
+                <div class="inline-block animate-spin text-amber-500 text-4xl">
+                    <i class="fa-solid fa-atom"></i>
+                </div>
+                <h3 class="text-xl font-bold text-white">Rättar provet strikt...</h3>
+                <p class="text-xs text-gray-400 leading-relaxed">
+                    AI-motorn analyserar dina skriftliga resonemang mot Lgr22:s kunskapskrav för kemi åk 8 med fokusering på korrekta facktermer.
+                </p>
+            </div>
+
+
+            <!-- RESULT DASHBOARD -->
+            <div id="quiz-result-screen" class="hidden max-w-4xl mx-auto space-y-6">
+                
+                <!-- Overview Header -->
+                <div class="bg-darkcard rounded-2xl p-6 sm:p-8 border border-darkcardborder shadow-2xl flex flex-col md:flex-row items-center justify-between gap-6">
+                    <div class="space-y-2 text-center md:text-left">
+                        <span class="text-xs font-bold text-amber-500 uppercase tracking-widest">Provresultat Lgr22</span>
+                        <h2 class="text-2xl sm:text-3xl font-extrabold text-white">Rättning & Slutbetyg</h2>
+                        <p id="result-summary-text" class="text-xs text-gray-400 max-w-md">
+                            Resultatet utvärderat enligt strikta kunskapskrav.
+                        </p>
+                    </div>
+
+                    <div class="flex items-center gap-3">
+                        <div class="bg-darkbg p-4 rounded-2xl border border-darkcardborder text-center min-w-[110px]">
+                            <span class="text-[10px] text-gray-400 block uppercase font-bold">Poäng</span>
+                            <span id="result-score-val" class="text-2xl font-black text-amber-500">0 / 0</span>
+                        </div>
+                        <div class="bg-darkbg p-4 rounded-2xl border border-amber-500/30 text-center min-w-[110px]">
+                            <span class="text-[10px] text-gray-400 block uppercase font-bold">Betyg</span>
+                            <span id="result-grade-val" class="text-3xl font-black text-emerald-400">E</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Answer Breakdown -->
+                <div class="bg-darkcard rounded-2xl p-6 border border-darkcardborder shadow-xl space-y-6">
+                    <h3 class="text-base font-bold text-white border-b border-darkcardborder pb-3 flex items-center gap-2">
+                        <i class="fa-solid fa-list-check text-amber-500"></i> Detaljerad genomgång & Mönstersvar
+                    </h3>
+                    <div id="result-feedback-list" class="space-y-4"></div>
+                </div>
+
+                <div class="flex justify-center">
+                    <button onclick="resetQuiz()" class="px-8 py-3 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-bold text-sm shadow-xl shadow-amber-600/20 transition-all flex items-center gap-2">
+                        <i class="fa-solid fa-rotate-right"></i> Gör ett nytt prov
+                    </button>
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <script>
+        /* -------------------------------------------------------------
+           1. EXAM QUESTION DATABASE (STRICTLY BALANCED PER GRADE)
+        ------------------------------------------------------------- */
+        const quizQuestions = [
+            // --- E-PROV QUESTIONS ---
+            {
+                id: 101,
+                level: 'E',
+                examType: 'E',
+                type: 'mc',
+                title: 'Vad visar atomnumret för ett grundämne i periodiska systemet?',
+                desc: 'Välj det alternativ som stämmer exakt.',
+                options: [
+                    'Antalet protoner i atomkärnan',
+                    'Antalet neutroner i atomkärnan',
+                    'Antalet elektronskal runt kärnan',
+                    'Atomens totala vikt i gram'
+                ],
+                correct: 0,
+                explanation: 'Atomnumret anger antalet positivt laddade protoner i atomkärnan.'
+            },
+            {
+                id: 102,
+                level: 'E',
+                examType: 'E',
+                type: 'mc',
+                title: 'Vilken grupp kallas för alkalimetaller?',
+                desc: 'Välj rätt grupp i periodiska systemet.',
+                options: [
+                    'Grupp 18',
+                    'Grupp 1 (förutom väte)',
+                    'Grupp 17',
+                    'Grupp 2'
+                ],
+                correct: 1,
+                explanation: 'Alkalimetallerna finns i grupp 1 och har alla 1 valenselektron.'
+            },
+            {
+                id: 103,
+                level: 'E',
+                examType: 'E',
+                type: 'text',
+                title: 'Kortfråga: Valenselektroner för Natrium',
+                desc: 'Natrium (Na) har atomnummer 11. Hur många valenselektroner (elektroner i det yttersta skalet) har natrium, och i vilken grupp finns ämnet?',
+                modelAnswer: 'Natrium har 1 valenselektron i sitt yttersta skal (elektronfördelning 2, 8, 1) och tillhör därför grupp 1 (alkalimetallerna).',
+                rubricKeywords: ['1', 'valenselektron', 'grupp 1', 'yttersta']
+            },
+
+            // --- C-PROV QUESTIONS ---
+            {
+                id: 201,
+                level: 'C',
+                examType: 'C',
+                type: 'mc',
+                title: 'Vad har alla grundämnen i samma GRUPP gemensamt?',
+                desc: 'Välj den kemiska egenskapen som stämmer.',
+                options: [
+                    'Samma antal elektronskal',
+                    'Lika många valenselektroner i yttersta skalet',
+                    'Samma atommassa',
+                    'Exakt samma antal protoner'
+                ],
+                correct: 1,
+                explanation: 'Ämnen i samma grupp har lika många valenselektroner vilket ger dem liknande reaktionsegenskaper.'
+            },
+            {
+                id: 202,
+                level: 'C',
+                examType: 'C',
+                type: 'text',
+                title: 'Varför är ädelgaser reaktionströga?',
+                desc: 'Förklara med kemiska begrepp varför ädelgaserna i grupp 18 sällan reagerar med andra ämnen.',
+                modelAnswer: 'Ädelgaser har sitt yttersta elektronskal helt fullt (ädelgasstruktur / oktettregeln). De är därför kemiskt stabila och har inget behov av att avge, ta upp eller dela elektroner.',
+                rubricKeywords: ['fullt', 'skal', 'ädelgasstruktur', 'stabil', 'valenselektroner', 'oktett']
+            },
+            {
+                id: 203,
+                level: 'C',
+                examType: 'C',
+                type: 'text',
+                title: 'Skillnad mellan atom och jon',
+                desc: 'Beskriv skillnaden på en neutral natriumatom (Na) och en natriumjon (Na+). Förklara vad som hänt med elektronerna.',
+                modelAnswer: 'En neutral natriumatom har lika många protoner som elektroner (11 av varje). För att få fullt yttersta skal lämnar den ifrån sig sin enda valenselektron. Den får då ett överskott på 1 positiv laddning i kärnan och blir en positivt laddad jon (Na+).',
+                rubricKeywords: ['laddad', 'elektron', 'lämnar', 'positiv', 'protoner', 'överskott', 'jon']
+            },
+
+            // --- A-PROV QUESTIONS (100% WRITTEN ESSAY) ---
+            {
+                id: 301,
+                level: 'A',
+                examType: 'A',
+                type: 'text',
+                title: 'Reaktivitetstrend i Grupp 1 (Alkalimetaller)',
+                desc: 'Jämför Natrium (Na, atomnr 11) och Kalium (K, atomnr 19). Vilket ämne reagerar HÄFTIGAST med vatten och VARFÖR? Resonera i flera led med begreppen elektronskal, avstånd till atomkärnan och attraktionskraft.',
+                modelAnswer: 'Kalium reagerar häftigare än natrium. Båda har 1 valenselektron, men kalium har 4 elektronskal medan natrium har 3. Det större avståndet mellan den positivt laddade atomkärnan och valenselektronen i kalium gör att den elektriska attraktionskraften blir svagare. Därför släpper kalium sin valenselektron lättare för att bilda en jon.',
+                rubricKeywords: ['kalium', 'skal', 'avstånd', 'kärna', 'attraktionskraft', 'svagare', 'släpper', 'lättare']
+            },
+            {
+                id: 302,
+                level: 'A',
+                examType: 'A',
+                type: 'text',
+                title: 'Jonbindning och Salters bildning (NaCl)',
+                desc: 'Redogör noggrant för vad som händer när natrium (Na) och klor (Cl) reagerar och bildar koksalt (NaCl). Beskriv elektronövergången, jonbildningen och varför jonerna hålls ihop.',
+                modelAnswer: 'Natrium har 1 valenselektron och vill lämna den för att få ädelgasstruktur. Klor har 7 valenselektroner och behöver 1 elektron för fullt skal. Natrium avger sin valenselektron till klor. Natrium blir en positiv jon (Na+) och klor blir en negativ kloridjon (Cl-). De motställda laddningarna dras till varandra med starka elektrostatiska krafter i en jonbindning.',
+                rubricKeywords: ['avger', 'tar upp', 'valenselektron', 'positiv', 'negativ', 'jonbindning', 'laddningar', 'ädelgasstruktur']
+            }
+        ];
+
+
+        /* -------------------------------------------------------------
+           2. STATE & TAB NAVIGATION
+        ------------------------------------------------------------- */
+        let activeExamType = 'E'; // 'E', 'C', 'A', 'ALL'
+        let currentQuestions = [];
+        let currentQIdx = 0;
+        let userAnswers = {};
+        let timerInterval = null;
+        let timerSeconds = 0;
+
+        function switchTab(tab) {
+            const ptableTab = document.getElementById('tab-ptable');
+            const quizTab = document.getElementById('tab-quiz');
+            const ptableBtn = document.getElementById('nav-ptable-btn');
+            const quizBtn = document.getElementById('nav-quiz-btn');
+
+            if (tab === 'ptable') {
+                ptableTab.classList.remove('hidden');
+                quizTab.classList.add('hidden');
+                ptableBtn.className = "px-4 py-1.5 rounded-lg text-sm font-semibold transition-all flex items-center gap-2 bg-amber-600 text-white shadow-md";
+                quizBtn.className = "px-4 py-1.5 rounded-lg text-sm font-semibold text-gray-400 hover:text-white transition-all flex items-center gap-2";
+            } else {
+                ptableTab.classList.add('hidden');
+                quizTab.classList.remove('hidden');
+                quizBtn.className = "px-4 py-1.5 rounded-lg text-sm font-semibold transition-all flex items-center gap-2 bg-amber-600 text-white shadow-md";
+                ptableBtn.className = "px-4 py-1.5 rounded-lg text-sm font-semibold text-gray-400 hover:text-white transition-all flex items-center gap-2";
+            }
+        }
+
+        function togglePtableSource() {
+            const iframeCont = document.getElementById('iframe-container');
+            const fallbackCont = document.getElementById('fallback-container');
+
+            if (iframeCont.classList.contains('hidden')) {
+                iframeCont.classList.remove('hidden');
+                fallbackCont.classList.add('hidden');
+            } else {
+                iframeCont.classList.add('hidden');
+                fallbackCont.classList.remove('hidden');
+                renderFallbackTable();
+            }
+        }
+
+
+        /* -------------------------------------------------------------
+           3. FALLBACK PERIODIC TABLE ENGINE
+        ------------------------------------------------------------- */
+        const fallbackElements = [
+            { num: 1, sym: 'H', name: 'Väte', p: 1, g: 1 },
+            { num: 2, sym: 'He', name: 'Helium', p: 1, g: 18 },
+            { num: 3, sym: 'Li', name: 'Litium', p: 2, g: 1 },
+            { num: 4, sym: 'Be', name: 'Beryllium', p: 2, g: 2 },
+            { num: 5, sym: 'B', name: 'Bor', p: 2, g: 13 },
+            { num: 6, sym: 'C', name: 'Kol', p: 2, g: 14 },
+            { num: 7, sym: 'N', name: 'Kväve', p: 2, g: 15 },
+            { num: 8, sym: 'O', name: 'Syre', p: 2, g: 16 },
+            { num: 9, sym: 'F', name: 'Fluor', p: 2, g: 17 },
+            { num: 10, sym: 'Ne', name: 'Neon', p: 2, g: 18 },
+            { num: 11, sym: 'Na', name: 'Natrium', p: 3, g: 1 },
+            { num: 12, sym: 'Mg', name: 'Magnesium', p: 3, g: 2 },
+            { num: 13, sym: 'Al', name: 'Aluminium', p: 3, g: 13 },
+            { num: 14, sym: 'Si', name: 'Kisel', p: 3, g: 14 },
+            { num: 15, sym: 'P', name: 'Fosfor', p: 3, g: 15 },
+            { num: 16, sym: 'S', name: 'Svavel', p: 3, g: 16 },
+            { num: 17, sym: 'Cl', name: 'Klor', p: 3, g: 17 },
+            { num: 18, sym: 'Ar', name: 'Argon', p: 3, g: 18 },
+            { num: 19, sym: 'K', name: 'Kalium', p: 4, g: 1 },
+            { num: 20, sym: 'Ca', name: 'Kalcium', p: 4, g: 2 },
+            { num: 26, sym: 'Fe', name: 'Järn', p: 4, g: 8 },
+            { num: 29, sym: 'Cu', name: 'Koppar', p: 4, g: 11 },
+            { num: 35, sym: 'Br', name: 'Brom', p: 4, g: 17 },
+            { num: 36, sym: 'Kr', name: 'Krypton', p: 4, g: 18 }
+        ];
+
+        function renderFallbackTable() {
+            const grid = document.getElementById('ptable-grid');
+            grid.innerHTML = '';
+
+            const map = {};
+            fallbackElements.forEach(e => map[`${e.p}-${e.g}`] = e);
+
+            for (let p = 1; p <= 4; p++) {
+                for (let g = 1; g <= 18; g++) {
+                    const el = map[`${p}-${g}`];
+                    if (el) {
+                        const card = document.createElement('div');
+                        card.className = "element-card bg-darkcard border border-darkcardborder rounded p-1 flex flex-col justify-between text-center";
+                        card.innerHTML = `
+                            <span class="text-[8px] text-gray-500 font-mono">${el.num}</span>
+                            <span class="text-sm font-bold text-amber-500 font-mono">${el.sym}</span>
+                            <span class="text-[8px] text-gray-300 truncate">${el.name}</span>
+                        `;
+                        grid.appendChild(card);
+                    } else {
+                        const spacer = document.createElement('div');
+                        spacer.className = "aspect-square opacity-0";
+                        grid.appendChild(spacer);
+                    }
+                }
+            }
+        }
+
+
+        /* -------------------------------------------------------------
+           4. EXAM ENGINE LOGIC
+        ------------------------------------------------------------- */
+        function startQuiz(examType) {
+            activeExamType = examType;
+
+            if (examType === 'ALL') {
+                currentQuestions = [...quizQuestions];
+            } else {
+                currentQuestions = quizQuestions.filter(q => q.examType === examType);
+            }
+
+            currentQIdx = 0;
+            userAnswers = {};
+            timerSeconds = 0;
+
+            document.getElementById('quiz-select-screen').classList.add('hidden');
+            document.getElementById('quiz-result-screen').classList.add('hidden');
+            document.getElementById('quiz-active-screen').classList.remove('hidden');
+
+            if (timerInterval) clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                timerSeconds++;
+                const m = String(Math.floor(timerSeconds / 60)).padStart(2, '0');
+                const s = String(timerSeconds % 60).padStart(2, '0');
+                document.getElementById('quiz-timer').innerText = `${m}:${s}`;
+            }, 1000);
+
+            renderQuestion();
+        }
+
+        function renderQuestion() {
+            const q = currentQuestions[currentQIdx];
+            const total = currentQuestions.length;
+
+            document.getElementById('quiz-progress-text').innerText = `Fråga ${currentQIdx + 1} av ${total}`;
+            document.getElementById('quiz-progress-bar').style.width = `${((currentQIdx + 1) / total) * 100}%`;
+
+            const badge = document.getElementById('quiz-level-badge');
+            badge.innerText = `${q.level}-Nivå`;
+            if (q.level === 'E') badge.className = "px-2.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-bold text-xs";
+            else if (q.level === 'C') badge.className = "px-2.5 py-0.5 rounded bg-blue-500/20 text-blue-400 font-bold text-xs";
+            else badge.className = "px-2.5 py-0.5 rounded bg-purple-500/20 text-purple-400 font-bold text-xs";
+
+            document.getElementById('q-tag').innerText = `Fråga ${currentQIdx + 1} • ${q.level}-Nivå`;
+            document.getElementById('q-type-badge').innerText = q.type === 'mc' ? 'Kryssfråga' : 'Skrivfråga';
+
+            document.getElementById('q-title').innerText = q.title;
+
+            const descElem = document.getElementById('q-description');
+            if (q.desc) {
+                descElem.innerText = q.desc;
+                descElem.classList.remove('hidden');
+            } else {
+                descElem.classList.add('hidden');
+            }
+
+            const container = document.getElementById('q-options-container');
+            container.innerHTML = '';
+
+            if (q.type === 'mc') {
+                q.options.forEach((optText, idx) => {
+                    const btn = document.createElement('button');
+                    const isSelected = userAnswers[q.id] === idx;
+
+                    btn.className = `w-full text-left p-4 rounded-xl border transition-all flex items-center justify-between ${
+                        isSelected 
+                            ? 'bg-amber-600/20 border-amber-500 text-white font-semibold' 
+                            : 'bg-darkbg border-darkcardborder text-gray-300 hover:border-gray-600'
+                    }`;
+
+                    btn.innerHTML = `
+                        <span class="text-xs sm:text-sm">${optText}</span>
+                        <div class="w-5 h-5 rounded-full border border-gray-600 flex items-center justify-center ${isSelected ? 'border-amber-500 bg-amber-500 text-darkbg' : ''}">
+                            ${isSelected ? '<i class="fa-solid fa-check text-xs"></i>' : ''}
+                        </div>
+                    `;
+
+                    btn.onclick = () => {
+                        userAnswers[q.id] = idx;
+                        renderQuestion();
+                    };
+
+                    container.appendChild(btn);
+                });
+            } else {
+                const textarea = document.createElement('textarea');
+                textarea.className = "w-full h-40 p-4 rounded-xl bg-darkbg border border-darkcardborder text-white text-xs sm:text-sm focus:outline-none focus:border-amber-500 leading-relaxed resize-none";
+                textarea.placeholder = "Skriv ditt förklarande svar här med kemiska facktermer...";
+                textarea.value = userAnswers[q.id] || '';
+
+                textarea.oninput = (e) => {
+                    userAnswers[q.id] = e.target.value;
+                };
+
+                container.appendChild(textarea);
+            }
+
+            document.getElementById('quiz-prev-btn').disabled = currentQIdx === 0;
+            document.getElementById('quiz-prev-btn').style.opacity = currentQIdx === 0 ? '0.4' : '1';
+
+            const nextBtn = document.getElementById('quiz-next-btn');
+            if (currentQIdx === total - 1) {
+                nextBtn.innerHTML = `<span>Lämna in prov</span> <i class="fa-solid fa-paper-plane"></i>`;
+            } else {
+                nextBtn.innerHTML = `<span>Nästa fråga</span> <i class="fa-solid fa-arrow-right"></i>`;
+            }
+        }
+
+        function prevQuestion() {
+            if (currentQIdx > 0) {
+                currentQIdx--;
+                renderQuestion();
+            }
+        }
+
+        function nextQuestion() {
+            if (currentQIdx < currentQuestions.length - 1) {
+                currentQIdx++;
+                renderQuestion();
+            } else {
+                finishAndGradeExam();
+            }
+        }
+
+
+        /* -------------------------------------------------------------
+           5. STRICT LGR22 GRADING SYSTEM (GEMINI AI + STRICT FALLBACK)
+        ------------------------------------------------------------- */
+        async function finishAndGradeExam() {
+            clearInterval(timerInterval);
+
+            document.getElementById('quiz-active-screen').classList.add('hidden');
+            document.getElementById('quiz-loading-screen').classList.remove('hidden');
+
+            const results = [];
+            let totalPoints = 0;
+            let maxPoints = 0;
+
+            for (const q of currentQuestions) {
+                const userAns = userAnswers[q.id];
+                let points = 0;
+                let maxQPoints = q.level === 'E' ? 1 : (q.level === 'C' ? 2 : 3);
+                let feedback = '';
+
+                if (q.type === 'mc') {
+                    const isCorrect = userAns === q.correct;
+                    points = isCorrect ? maxQPoints : 0;
+                    feedback = isCorrect ? 'Korrekt svar.' : `Felaktigt. Korrekt svar var: ${q.options[q.correct]}`;
+                } else {
+                    const evalRes = await evaluateWrittenStrict(q, userAns || '');
+                    points = Math.min(evalRes.score, maxQPoints);
+                    feedback = evalRes.feedback;
+                }
+
+                totalPoints += points;
+                maxPoints += maxQPoints;
+
+                results.push({
+                    q: q,
+                    userAns: userAns,
+                    points: points,
+                    maxPoints: maxQPoints,
+                    feedback: feedback
+                });
+            }
+
+            renderFinalDashboard(results, totalPoints, maxPoints);
+        }
+
+        async function evaluateWrittenStrict(q, text) {
+            if (!text.trim()) {
+                return { score: 0, feedback: 'Inget svar avgivet. Skriftliga resonemang krävs för att uppnå poäng.' };
+            }
+
+            const userKey = document.getElementById('user-gemini-key').value.trim();
+            const apiKey = userKey || (typeof window.getGeminiAPIKey === 'function' ? window.getGeminiAPIKey() : '');
+
+            if (apiKey) {
+                try {
+                    const prompt = `Du är en strikt kemilärare i den svenska grundskolan (Årskurs 8) som rättar enligt Lgr22.
+Bedöm elevens svar mycket HÅRT och NOGGRANT. Ge INTE höga poäng för korta eller vaga svar utan korrekta kemiska facktermer (t.ex. valenselektroner, elektronskal, attraktionskraft, joner, ädelgasstruktur).
+
+Fråga (${q.level}-Nivå): ${q.title}
+Modellsvar: ${q.modelAnswer}
+Elevens Svar: "${text}"
+
+Ge svaret i exakt följande JSON utan markdown:
+{
+    "score": <Sifferpoäng mellan 0 och ${q.level === 'E' ? 1 : (q.level === 'C' ? 2 : 3)}>,
+    "feedback": "<Kort, strikt och pedagogisk feedback på svenska om brister och vad som saknas för högre poäng.>"
+}`;
+
+                    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+                    });
+
+                    const data = await res.json();
+                    const rawText = data.candidates?.[0]?.content?.parts?.[0]?.text;
+
+                    if (rawText) {
+                        return JSON.parse(rawText.replace(/```json|```/g, '').trim());
+                    }
+                } catch (e) {
+                    console.warn("AI grading error, using strict fallback:", e);
+                }
+            }
+
+            // Strict local fallback
+            return strictLocalRubric(q, text);
+        }
+
+        function strictLocalRubric(q, text) {
+            const lower = text.toLowerCase();
+            const keywords = q.rubricKeywords || [];
+            let matches = 0;
+
+            keywords.forEach(kw => {
+                if (lower.includes(kw.toLowerCase())) matches++;
+            });
+
+            const maxP = q.level === 'E' ? 1 : (q.level === 'C' ? 2 : 3);
+            const ratio = matches / Math.max(1, keywords.length);
+
+            let score = 0;
+            if (ratio >= 0.75) score = maxP;
+            else if (ratio >= 0.4) score = Math.max(1, maxP - 1);
+
+            let feedback = `Svaret innehåller en del korrekta begrepp. Jämför med mönstersvaret för full poäng.`;
+            if (score === 0) {
+                feedback = `Svaret saknar nödvändiga kemiska facktermer (${keywords.slice(0, 3).join(', ')}).`;
+            }
+
+            return { score, feedback };
+        }
+
+        function renderFinalDashboard(results, totalPoints, maxPoints) {
+            document.getElementById('quiz-loading-screen').classList.add('hidden');
+            document.getElementById('quiz-result-screen').classList.remove('hidden');
+
+            document.getElementById('result-score-val').innerText = `${totalPoints} / ${maxPoints}`;
+
+            const ratio = totalPoints / maxPoints;
+            let rawGrade = 'F';
+
+            if (ratio >= 0.85) rawGrade = 'A';
+            else if (ratio >= 0.7) rawGrade = 'B';
+            else if (ratio >= 0.55) rawGrade = 'C';
+            else if (ratio >= 0.4) rawGrade = 'D';
+            else if (ratio >= 0.25) rawGrade = 'E';
+
+            // STRICT GRADE CAP BASED ON TEST LEVEL
+            let finalGrade = rawGrade;
+            if (activeExamType === 'E') {
+                if (rawGrade !== 'F') finalGrade = 'E'; // E-prov can NEVER give > E
+            } else if (activeExamType === 'C') {
+                if (['A', 'B'].includes(rawGrade)) finalGrade = 'C'; // C-prov can NEVER give > C
+            }
+
+            const gradeElem = document.getElementById('result-grade-val');
+            gradeElem.innerText = finalGrade;
+
+            if (finalGrade === 'A' || finalGrade === 'B') gradeElem.className = 'text-3xl font-black text-purple-400';
+            else if (finalGrade === 'C' || finalGrade === 'D') gradeElem.className = 'text-3xl font-black text-blue-400';
+            else if (finalGrade === 'E') gradeElem.className = 'text-3xl font-black text-emerald-400';
+            else gradeElem.className = 'text-3xl font-black text-red-500';
+
+            document.getElementById('result-summary-text').innerText = 
+                `Provtyp: ${activeExamType === 'ALL' ? 'Blandat' : activeExamType + '-Prov'} • Max uppnåeligt betyg för detta prov: ${activeExamType === 'E' ? 'E' : (activeExamType === 'C' ? 'C' : 'A')}.`;
+
+            const feedbackList = document.getElementById('result-feedback-list');
+            feedbackList.innerHTML = '';
+
+            results.forEach((r, idx) => {
+                const card = document.createElement('div');
+                card.className = "p-4 rounded-xl bg-darkbg border border-darkcardborder space-y-2 text-xs";
+
+                let ansText = r.q.type === 'mc' ? (r.userAns !== undefined ? r.q.options[r.userAns] : 'Ej besvarad') : (r.userAns || 'Ej besvarad');
+
+                card.innerHTML = `
+                    <div class="flex items-center justify-between">
+                        <span class="font-bold text-gray-400">Fråga ${idx + 1} (${r.q.level}-Nivå)</span>
+                        <span class="font-mono font-bold ${r.points > 0 ? 'text-emerald-400' : 'text-red-400'}">
+                            ${r.points} / ${r.maxPoints} p
+                        </span>
+                    </div>
+                    <h4 class="font-bold text-white text-sm">${r.q.title}</h4>
+                    <div class="bg-darkcard p-3 rounded-lg border border-darkcardborder/60 space-y-2">
+                        <p><strong class="text-gray-400">Ditt Svar:</strong> ${ansText}</p>
+                        <p class="text-amber-500"><i class="fa-solid fa-circle-info mr-1"></i> <strong>Bedömning:</strong> ${r.feedback}</p>
+                        ${r.q.modelAnswer ? `<p class="text-gray-400 pt-1 border-t border-darkcardborder"><strong class="text-emerald-400">Mönstersvar:</strong> ${r.q.modelAnswer}</p>` : ''}
+                    </div>
+                `;
+
+                feedbackList.appendChild(card);
+            });
+        }
+
+        function resetQuiz() {
+            document.getElementById('quiz-result-screen').classList.add('hidden');
+            document.getElementById('quiz-select-screen').classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
