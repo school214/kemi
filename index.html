@@ -1,1316 +1,1184 @@
 <!DOCTYPE html>
-<html lang="sv" class="dark">
+<html lang="sv">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ptable & Kemi Prov - Årskurs 8</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        darkbg: '#0b0c10',
-                        darkcard: '#121318',
-                        darkcardborder: '#242731',
-                        amber: {
-                            500: '#eab308',
-                            600: '#ca8a04',
-                            700: '#a16207',
-                        }
-                    }
-                }
-            }
-        }
-    </script>
-    <!-- FontAwesome icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #0b0c10;
-            color: #f3f4f6;
-        }
-
-        .glow-amber {
-            box-shadow: 0 0 25px rgba(234, 179, 8, 0.25);
-        }
-        
-        .ptable-grid {
-            display: grid;
-            grid-template-columns: repeat(18, minmax(0, 1fr));
-            gap: 2px;
-        }
-
-        .element-card {
-            aspect-ratio: 1 / 1;
-            transition: all 0.2s ease;
-            cursor: pointer;
-        }
-
-        .element-card:hover {
-            transform: scale(1.15);
-            z-index: 30;
-            box-shadow: 0 0 12px rgba(234, 179, 8, 0.5);
-        }
-
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #0b0c10;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #242731;
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #ca8a04;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KemiQuiz Pro - Nationellt Bedömningssystem (Lgr22)</title>
+  <!-- Tailwind CSS & Lucide Icons -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #0b0c10;
+      color: #e2e8f0;
+    }
+    .font-mono { font-family: 'JetBrains Mono', monospace; }
+    .gold-glow {
+      box-shadow: 0 0 20px rgba(234, 179, 8, 0.2);
+    }
+    .gold-glow-lg {
+      box-shadow: 0 0 35px rgba(234, 179, 8, 0.35);
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #121318;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #27272a;
+      border-radius: 3px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: #eab308;
+    }
+  </style>
 </head>
-<body class="min-h-screen flex flex-col bg-[#0b0c10] text-gray-100 antialiased relative">
+<body class="min-h-screen flex flex-col justify-between selection:bg-yellow-500 selection:text-black">
 
-    <!-- ACCESS DENIED / BLOCKED IP SCREEN -->
-    <div id="blocked-screen" class="fixed inset-0 bg-[#0b0c10] z-[100] hidden flex flex-col items-center justify-center p-6 text-center">
-        <div class="max-w-md w-full bg-darkcard p-8 rounded-2xl border border-red-500/30 shadow-2xl space-y-4">
-            <div class="w-16 h-16 rounded-2xl bg-red-500/10 border border-red-500/30 text-red-500 flex items-center justify-center text-3xl mx-auto">
-                <i class="fa-solid fa-ban"></i>
-            </div>
-            <h2 class="text-2xl font-extrabold text-white">Åtkomst Nekad</h2>
-            <p class="text-xs text-gray-400 leading-relaxed">
-                Din IP-adress har blivit blockerad från denna webbplats av en administratör.
-            </p>
-            <div class="bg-darkbg p-3 rounded-xl border border-darkcardborder font-mono text-xs text-amber-500">
-                Din IP: <span id="blocked-ip-display">Identifierar...</span>
-            </div>
-        </div>
+  <!-- BLOCKED IP OVERLAY -->
+  <div id="blockedOverlay" class="hidden fixed inset-0 bg-black/95 z-[9999] flex flex-col items-center justify-center p-6 text-center">
+    <div class="bg-red-950/40 border border-red-500/50 p-8 rounded-2xl max-w-lg w-full gold-glow">
+      <i data-lucide="shield-alert" class="w-16 h-16 text-red-500 mx-auto mb-4 animate-bounce"></i>
+      <h1 class="text-3xl font-bold text-red-400 mb-2">Åtkomst Nekad / Access Denied</h1>
+      <p class="text-slate-300 mb-4">Din IP-adress har blivit spärrad av systemadministratören.</p>
+      <div class="bg-black/60 p-3 rounded border border-red-900/50 font-mono text-sm text-red-300 mb-4">
+        IP: <span id="blockedIpDisplay">Laddar...</span>
+      </div>
+      <p class="text-xs text-slate-500">Om du anser att detta är ett misstag, kontakta provansvarig lärare.</p>
     </div>
+  </div>
 
-    <!-- Header Navigation -->
-    <header class="border-b border-darkcardborder bg-[#121318]/90 backdrop-blur sticky top-0 z-50 px-4 py-3">
-        <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
-            <div class="flex items-center space-x-3">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 to-amber-700 flex items-center justify-center text-black font-bold text-xl shadow-lg shadow-amber-600/30">
-                    <i class="fa-solid fa-flask"></i>
-                </div>
-                <div>
-                    <h1 class="font-extrabold text-lg sm:text-xl tracking-tight text-white flex items-center gap-2">
-                        Ptable & Kemi Prov <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-500 border border-amber-500/30">Åk 8 Lgr22</span>
-                    </h1>
-                    <p class="text-xs text-gray-400 hidden sm:block">Ptable.com Integration & Groq AI-Rättat Mini-Prov</p>
-                </div>
-            </div>
-
-            <!-- Tab Buttons & Admin Login -->
-            <div class="flex items-center gap-3">
-                <nav class="flex items-center space-x-2 bg-darkcard p-1 rounded-xl border border-darkcardborder">
-                    <button id="nav-ptable-btn" onclick="switchTab('ptable')" class="px-4 py-1.5 rounded-lg text-sm font-semibold transition-all flex items-center gap-2 bg-amber-600 text-black shadow-md font-bold">
-                        <i class="fa-solid fa-table-cells"></i>
-                        <span>Periodiska Systemet</span>
-                    </button>
-                    <button id="nav-quiz-btn" onclick="switchTab('quiz')" class="px-4 py-1.5 rounded-lg text-sm font-semibold text-gray-400 hover:text-white transition-all flex items-center gap-2">
-                        <i class="fa-solid fa-file-signature"></i>
-                        <span>Kemi Mini-Prov</span>
-                    </button>
-                    <button id="nav-history-btn" onclick="switchTab('history')" class="px-4 py-1.5 rounded-lg text-sm font-semibold text-gray-400 hover:text-white transition-all flex items-center gap-2">
-                        <i class="fa-solid fa-clock-rotate-left"></i>
-                        <span>Historik</span>
-                    </button>
-                    <button id="nav-admin-btn" onclick="switchTab('admin')" class="px-3 py-1.5 rounded-lg text-sm font-semibold text-gray-400 hover:text-white transition-all flex items-center gap-2 border border-amber-500/30 text-amber-500 hover:bg-amber-500/10">
-                        <i class="fa-solid fa-shield-halved"></i>
-                        <span>Admin</span>
-                    </button>
-                </nav>
-            </div>
+  <!-- TOP HEADER & NAVBAR -->
+  <header class="bg-[#121318] border-b border-zinc-800 sticky top-0 z-40 backdrop-blur-md bg-opacity-90">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        
+        <!-- Logo -->
+        <div class="flex items-center space-x-3 cursor-pointer" onclick="switchTab('prov')">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-yellow-600 flex items-center justify-center font-bold text-black text-xl shadow-lg">
+            K
+          </div>
+          <div>
+            <span class="text-lg font-bold tracking-tight text-white flex items-center gap-2">
+              KemiQuiz <span class="text-xs font-mono px-2 py-0.5 rounded bg-yellow-500/10 text-yellow-400 border border-yellow-500/30">Skolverket Lgr22</span>
+            </span>
+            <p class="text-xs text-zinc-400">Nationellt Bedömningssystem Åk 8</p>
+          </div>
         </div>
-    </header>
 
-    <!-- Main Workspace -->
-    <main class="flex-1 max-w-7xl w-full mx-auto px-2 sm:px-4 py-6">
+        <!-- Navigation Tabs -->
+        <nav class="hidden md:flex space-x-1">
+          <button id="nav-prov" onclick="switchTab('prov')" class="px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2 text-yellow-400 bg-zinc-800/80 border border-yellow-500/30">
+            <i data-lucide="file-text" class="w-4 h-4"></i> Prov & Test
+          </button>
+          <button id="nav-ptable" onclick="switchTab('ptable')" class="px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2 text-zinc-400 hover:text-white hover:bg-zinc-800">
+            <i data-lucide="grid" class="w-4 h-4"></i> Periodiska Systemet
+          </button>
+          <button id="nav-dash" onclick="switchTab('dash')" class="px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2 text-zinc-400 hover:text-white hover:bg-zinc-800">
+            <i data-lucide="bar-chart-3" class="w-4 h-4"></i> Resultat & Analys
+          </button>
+          <button id="nav-teacher" onclick="switchTab('teacher')" class="px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2 text-zinc-400 hover:text-white hover:bg-zinc-800">
+            <i data-lucide="users" class="w-4 h-4"></i> Lärardashboard
+          </button>
+        </nav>
 
-        <!-- TAB 1: PTABLE INTEGRATION VIEW -->
-        <section id="tab-ptable" class="space-y-4">
-            
-            <!-- Controls Bar for Ptable iframe -->
-            <div class="bg-darkcard rounded-2xl p-4 border border-darkcardborder shadow-xl flex flex-wrap items-center justify-between gap-4">
-                <div class="flex items-center space-x-2 text-xs text-gray-300">
-                    <span class="inline-flex items-center justify-center w-2 h-2 rounded-full bg-emerald-500 animate-pulse mr-1"></span>
-                    <span class="font-bold text-white">Ptable.com Extension View</span>
-                    <span class="text-gray-500">|</span>
-                    <span class="text-gray-400">Officiellt interaktivt periodiskt system på svenska</span>
-                </div>
+        <!-- Right System Info & Admin Button -->
+        <div class="flex items-center space-x-3">
+          <div class="hidden lg:flex items-center space-x-2 text-xs bg-zinc-900 border border-zinc-800 px-3 py-1.5 rounded-lg">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span class="text-zinc-400">IP: <strong id="headerUserIp" class="text-zinc-200 font-mono">127.0.0.1</strong></span>
+          </div>
+          <button onclick="openAdminModal()" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-zinc-800 hover:bg-zinc-700 text-yellow-500 border border-yellow-500/20 flex items-center gap-1.5 transition">
+            <i data-lucide="lock" class="w-3.5 h-3.5"></i> Admin
+          </button>
+        </div>
 
-                <div class="flex items-center gap-2">
-                    <button onclick="togglePtableSource()" id="toggle-source-btn" class="px-3 py-1.5 rounded-lg bg-darkbg border border-darkcardborder text-xs font-semibold text-gray-300 hover:text-white hover:border-amber-500 transition-all flex items-center gap-1.5">
-                        <i class="fa-solid fa-arrows-rotate"></i> Växla Vy (Iframe / Inbyggd)
-                    </button>
-                    <a href="https://ptable.com/?lang=sv" target="_blank" class="px-3 py-1.5 rounded-lg bg-amber-600/20 text-amber-500 hover:bg-amber-600 hover:text-black border border-amber-500/40 text-xs font-bold transition-all flex items-center gap-1.5">
-                        <i class="fa-solid fa-arrow-up-right-from-square"></i> Öppna ptable.com
-                    </a>
-                </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN CONTAINER -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-1 w-full">
+
+    <!-- VIEW 1: PROV / EXAM SELECTION & TEST ENGINE -->
+    <section id="view-prov" class="space-y-6">
+
+      <!-- LEVEL SELECTION CARDS (If no test running) -->
+      <div id="provSelectionArea" class="space-y-6">
+        <div class="bg-gradient-to-r from-zinc-900 via-zinc-900 to-black p-6 rounded-2xl border border-zinc-800 shadow-xl">
+          <h2 class="text-2xl font-bold text-white mb-2 flex items-center gap-2">
+            <i data-lucide="award" class="text-yellow-400"></i> Välj Provnivå - Kemi Årskurs 8
+          </h2>
+          <p class="text-zinc-400 text-sm max-w-3xl">
+            Provsystemet analyserar dina svar med AI utifrån Skolverkets Lgr22-kriterier. För högre betyg krävs rätt struktur (Orsak &rarr; Process &rarr; Slutsats) och korrekta kemiska begrepp.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          
+          <!-- E-NIVÅ CARD -->
+          <div class="bg-zinc-900/90 border border-zinc-800 hover:border-emerald-500/50 rounded-xl p-5 flex flex-col justify-between transition group hover:shadow-lg hover:shadow-emerald-950/20">
+            <div>
+              <div class="flex items-center justify-between mb-3">
+                <span class="text-xs font-bold font-mono bg-emerald-500/10 text-emerald-400 px-2.5 py-1 rounded border border-emerald-500/20">E-NIVÅ</span>
+                <i data-lucide="check-circle" class="w-5 h-5 text-emerald-400"></i>
+              </div>
+              <h3 class="text-lg font-bold text-white mb-2 group-hover:text-emerald-400 transition">E-Prov (Grund)</h3>
+              <p class="text-xs text-zinc-400 mb-4">Blandning av flervalsfrågor och korta skrivfrågor. Täcker grundläggande kemiska fakta och atomens uppbyggnad.</p>
+              <div class="text-xs text-zinc-500 space-y-1 mb-4 font-mono">
+                <div>• Maxbetyg: <strong class="text-emerald-400">E</strong></div>
+                <div>• Frågetyp: Kryss + Skriv</div>
+                <div>• Tid: Ca 15 min</div>
+              </div>
             </div>
+            <button onclick="startExam('E')" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-black font-bold text-xs rounded-lg transition shadow">
+              Starta E-Prov
+            </button>
+          </div>
 
-            <!-- Main Iframe Container -->
-            <div id="iframe-container" class="w-full h-[750px] bg-darkcard rounded-2xl border border-darkcardborder shadow-2xl overflow-hidden relative">
-                <iframe id="ptable-iframe" src="https://ptable.com/?lang=sv" class="w-full h-full border-0"></iframe>
+          <!-- C-NIVÅ CARD -->
+          <div class="bg-zinc-900/90 border border-zinc-800 hover:border-blue-500/50 rounded-xl p-5 flex flex-col justify-between transition group hover:shadow-lg hover:shadow-blue-950/20">
+            <div>
+              <div class="flex items-center justify-between mb-3">
+                <span class="text-xs font-bold font-mono bg-blue-500/10 text-blue-400 px-2.5 py-1 rounded border border-blue-500/20">C-NIVÅ</span>
+                <i data-lucide="trending-up" class="w-5 h-5 text-blue-400"></i>
+              </div>
+              <h3 class="text-lg font-bold text-white mb-2 group-hover:text-blue-400 transition">C-Prov (Fördjupad)</h3>
+              <p class="text-xs text-zinc-400 mb-4">Flest skrivfrågor. Kräver att du förklarar samband, valenselektroner och kemiska bindningar med korrekt vokabulär.</p>
+              <div class="text-xs text-zinc-500 space-y-1 mb-4 font-mono">
+                <div>• Maxbetyg: <strong class="text-blue-400">C</strong></div>
+                <div>• Frågetyp: Dominerat av Skriv</div>
+                <div>• Tid: Ca 25 min</div>
+              </div>
             </div>
+            <button onclick="startExam('C')" class="w-full py-2.5 bg-blue-600 hover:bg-blue-500 text-black font-bold text-xs rounded-lg transition shadow">
+              Starta C-Prov
+            </button>
+          </div>
 
-            <!-- Fallback Built-in Table Container -->
-            <div id="fallback-container" class="hidden bg-darkcard rounded-2xl p-4 border border-darkcardborder shadow-2xl overflow-x-auto space-y-4">
-                <div class="flex items-center justify-between">
-                    <h3 class="text-sm font-bold text-amber-500 flex items-center gap-2">
-                        <i class="fa-solid fa-atom"></i> Inbyggd Snabbvy (Svenska)
-                    </h3>
-                    <span class="text-xs text-gray-400">Snabböversikt över vanliga grundämnen</span>
-                </div>
-                <div class="min-w-[900px]">
-                    <div id="ptable-grid" class="ptable-grid"></div>
-                </div>
+          <!-- A-NIVÅ CARD -->
+          <div class="bg-zinc-900/90 border border-zinc-800 hover:border-amber-500/50 rounded-xl p-5 flex flex-col justify-between transition group hover:shadow-lg hover:shadow-amber-950/20">
+            <div>
+              <div class="flex items-center justify-between mb-3">
+                <span class="text-xs font-bold font-mono bg-amber-500/10 text-amber-400 px-2.5 py-1 rounded border border-amber-500/20">A-NIVÅ</span>
+                <i data-lucide="zap" class="w-5 h-5 text-amber-400"></i>
+              </div>
+              <h3 class="text-lg font-bold text-white mb-2 group-hover:text-amber-400 transition">A-Prov (Resonemang)</h3>
+              <p class="text-xs text-zinc-400 mb-4"><strong>100% Skrivfrågor.</strong> Kräver flerstegsresonemang (Orsak &rarr; Process &rarr; Slutsats), analys av bindningar och radioaktivitet.</p>
+              <div class="text-xs text-zinc-500 space-y-1 mb-4 font-mono">
+                <div>• Betyg: <strong class="text-amber-400">Upp till A</strong></div>
+                <div>• Frågetyp: Endast Essä/Skriv</div>
+                <div>• Tid: Ca 35 min</div>
+              </div>
             </div>
+            <button onclick="startExam('A')" class="w-full py-2.5 bg-amber-500 hover:bg-yellow-400 text-black font-bold text-xs rounded-lg transition shadow">
+              Starta A-Prov
+            </button>
+          </div>
 
-        </section>
-
-
-        <!-- TAB 2: KEMI MINI-PROV -->
-        <section id="tab-quiz" class="hidden space-y-6">
-            
-            <!-- LEVEL SELECTION SCREEN -->
-            <div id="quiz-select-screen" class="max-w-4xl mx-auto bg-darkcard rounded-2xl p-6 sm:p-8 border border-darkcardborder shadow-2xl space-y-8">
-                
-                <div class="text-center space-y-3">
-                    <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-amber-600/10 text-amber-500 text-3xl border border-amber-500/30 glow-amber">
-                        <i class="fa-solid fa-scroll"></i>
-                    </div>
-                    <h2 class="text-2xl sm:text-3xl font-extrabold text-white">Kemi Prov - Periodiska Systemet (Åk 8)</h2>
-                    <p class="text-sm text-gray-400 max-w-xl mx-auto">
-                        Välj provnivå nedan. Provet rättas automatiskt via Groq AI med strikta Lgr22-kriterier.
-                    </p>
-                </div>
-
-                <!-- Level Cards Grid -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                    
-                    <!-- E-PROV -->
-                    <button onclick="startQuiz('E')" class="p-6 rounded-2xl bg-[#0b0c10] border border-emerald-500/30 hover:border-emerald-500 transition-all text-left group hover:shadow-lg hover:shadow-emerald-500/10 flex flex-col justify-between space-y-4">
-                        <div class="space-y-2">
-                            <div class="flex justify-between items-center">
-                                <span class="px-3 py-1 rounded-lg bg-emerald-500/20 text-emerald-400 font-extrabold text-xs tracking-wider uppercase">E-Prov (Grund)</span>
-                                <span class="text-xs font-mono text-gray-400">MaxBetyg: <strong class="text-emerald-400">E</strong></span>
-                            </div>
-                            <h3 class="font-bold text-lg text-white">Grundläggande Begrepp</h3>
-                            <p class="text-xs text-gray-400 leading-relaxed">
-                                Blanding av kryssfrågor och korta skrivfrågor om atomnummer, perioder och kemiska tecken.
-                            </p>
-                        </div>
-                        <div class="pt-3 border-t border-darkcardborder flex justify-between items-center text-xs">
-                            <span class="text-emerald-400 font-semibold"><i class="fa-solid fa-pen-to-square mr-1"></i> Kryss + Skrivfrågor</span>
-                            <i class="fa-solid fa-arrow-right text-gray-500 group-hover:text-emerald-400 transition-colors"></i>
-                        </div>
-                    </button>
-
-                    <!-- C-PROV -->
-                    <button onclick="startQuiz('C')" class="p-6 rounded-2xl bg-[#0b0c10] border border-blue-500/30 hover:border-blue-500 transition-all text-left group hover:shadow-lg hover:shadow-blue-500/10 flex flex-col justify-between space-y-4">
-                        <div class="space-y-2">
-                            <div class="flex justify-between items-center">
-                                <span class="px-3 py-1 rounded-lg bg-blue-500/20 text-blue-400 font-extrabold text-xs tracking-wider uppercase">C-Prov (Fördjupning)</span>
-                                <span class="text-xs font-mono text-gray-400">MaxBetyg: <strong class="text-blue-400">C</strong></span>
-                            </div>
-                            <h3 class="font-bold text-lg text-white">Fördjupad Förståelse</h3>
-                            <p class="text-xs text-gray-400 leading-relaxed">
-                                Huvudsakligen öppna SKRIVFRÅGOR om reaktivitet, valenselektroner, joner och ädelgasstruktur.
-                            </p>
-                        </div>
-                        <div class="pt-3 border-t border-darkcardborder flex justify-between items-center text-xs">
-                            <span class="text-blue-400 font-semibold"><i class="fa-solid fa-align-left mr-1"></i> Flest Skrivfrågor</span>
-                            <i class="fa-solid fa-arrow-right text-gray-500 group-hover:text-blue-400 transition-colors"></i>
-                        </div>
-                    </button>
-
-                    <!-- A-PROV -->
-                    <button onclick="startQuiz('A')" class="p-6 rounded-2xl bg-[#0b0c10] border border-purple-500/30 hover:border-purple-500 transition-all text-left group hover:shadow-lg hover:shadow-purple-500/10 flex flex-col justify-between space-y-4">
-                        <div class="space-y-2">
-                            <div class="flex justify-between items-center">
-                                <span class="px-3 py-1 rounded-lg bg-purple-500/20 text-purple-400 font-extrabold text-xs tracking-wider uppercase">A-Prov (Resonemang)</span>
-                                <span class="text-xs font-mono text-gray-400">MaxBetyg: <strong class="text-purple-400">A</strong></span>
-                            </div>
-                            <h3 class="font-bold text-lg text-white">Avancerade Orsakssamband</h3>
-                            <p class="text-xs text-gray-400 leading-relaxed">
-                                <strong>100% SKRIVFRÅGOR!</strong> Komplexa resonemang i flera led kring attraktionskrafter, trender och bindningar.
-                            </p>
-                        </div>
-                        <div class="pt-3 border-t border-darkcardborder flex justify-between items-center text-xs">
-                            <span class="text-purple-400 font-semibold"><i class="fa-solid fa-file-lines mr-1"></i> ENBART Skrivfrågor</span>
-                            <i class="fa-solid fa-arrow-right text-gray-500 group-hover:text-purple-400 transition-colors"></i>
-                        </div>
-                    </button>
-
-                    <!-- BLANDAT PROV -->
-                    <button onclick="startQuiz('ALL')" class="p-6 rounded-2xl bg-[#0b0c10] border border-amber-500/40 hover:border-amber-500 transition-all text-left group hover:shadow-lg hover:shadow-amber-500/10 flex flex-col justify-between space-y-4">
-                        <div class="space-y-2">
-                            <div class="flex justify-between items-center">
-                                <span class="px-3 py-1 rounded-lg bg-amber-500/20 text-amber-500 font-extrabold text-xs tracking-wider uppercase">Blandat Prov (E-A)</span>
-                                <span class="text-xs font-mono text-gray-400">MaxBetyg: <strong class="text-amber-500">A</strong></span>
-                            </div>
-                            <h3 class="font-bold text-lg text-white">Fullständigt Kemiprov</h3>
-                            <p class="text-xs text-gray-400 leading-relaxed">
-                                Alla frågetyper och svårighetsgrader samlade i ett komplett prov som prövar hela betygsskalan.
-                            </p>
-                        </div>
-                        <div class="pt-3 border-t border-darkcardborder flex justify-between items-center text-xs">
-                            <span class="text-amber-500 font-semibold"><i class="fa-solid fa-layer-group mr-1"></i> Alla Nivåer (E, C, A)</span>
-                            <i class="fa-solid fa-arrow-right text-gray-500 group-hover:text-amber-500 transition-colors"></i>
-                        </div>
-                    </button>
-
-                </div>
-
+          <!-- BLANDAT PROV CARD -->
+          <div class="bg-zinc-900/90 border border-zinc-800 hover:border-purple-500/50 rounded-xl p-5 flex flex-col justify-between transition group hover:shadow-lg hover:shadow-purple-950/20">
+            <div>
+              <div class="flex items-center justify-between mb-3">
+                <span class="text-xs font-bold font-mono bg-purple-500/10 text-purple-400 px-2.5 py-1 rounded border border-purple-500/20">FULLSTÄNDIGT</span>
+                <i data-lucide="layers" class="w-5 h-5 text-purple-400"></i>
+              </div>
+              <h3 class="text-lg font-bold text-white mb-2 group-hover:text-purple-400 transition">Blandat Nationellt Prov</h3>
+              <p class="text-xs text-zinc-400 mb-4">Omfattar frågor från alla nivåer (E, C och A). Ger en komplett kartläggning av din faktiska kunskapsnivå.</p>
+              <div class="text-xs text-zinc-500 space-y-1 mb-4 font-mono">
+                <div>• Betyg: <strong class="text-purple-400">E – A</strong></div>
+                <div>• Frågetyp: Kryss + Skriv</div>
+                <div>• Tid: Ca 40 min</div>
+              </div>
             </div>
+            <button onclick="startExam('MIXED')" class="w-full py-2.5 bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs rounded-lg transition shadow">
+              Starta Blandat Prov
+            </button>
+          </div>
 
+        </div>
+      </div>
 
-            <!-- ACTIVE QUIZ SCREEN -->
-            <div id="quiz-active-screen" class="hidden max-w-3xl mx-auto space-y-6">
-                
-                <!-- Progress Header -->
-                <div class="bg-darkcard rounded-2xl p-4 border border-darkcardborder shadow-xl flex items-center justify-between gap-4">
-                    <div class="flex-1">
-                        <div class="flex justify-between text-xs font-medium text-gray-400 mb-1.5">
-                            <span id="quiz-progress-text">Fråga 1 av 5</span>
-                            <span id="quiz-level-badge" class="px-2.5 py-0.5 rounded bg-amber-500/20 text-amber-500 font-bold text-xs">E-Nivå</span>
-                        </div>
-                        <div class="w-full h-2.5 bg-darkbg rounded-full overflow-hidden">
-                            <div id="quiz-progress-bar" class="h-full bg-amber-600 transition-all duration-300"></div>
-                        </div>
-                    </div>
-                    <div class="flex items-center gap-2 text-xs font-mono text-gray-300 bg-darkbg px-3 py-2 rounded-xl border border-darkcardborder">
-                        <i class="fa-regular fa-clock text-amber-500"></i>
-                        <span id="quiz-timer">00:00</span>
-                    </div>
-                </div>
+      <!-- ACTIVE EXAM INTERFACE (Hidden by default) -->
+      <div id="activeExamArea" class="hidden space-y-6">
+        
+        <!-- Exam Top Bar -->
+        <div class="bg-zinc-900 border border-zinc-800 p-4 rounded-xl flex flex-wrap items-center justify-between gap-4">
+          <div class="flex items-center gap-3">
+            <span id="activeExamBadge" class="px-3 py-1 bg-yellow-500/10 text-yellow-400 border border-yellow-500/30 text-xs font-bold font-mono rounded-lg">
+              PROV ONGOING
+            </span>
+            <span id="examTitleDisplay" class="text-lg font-bold text-white">Prov i Periodiska Systemet</span>
+          </div>
 
-                <!-- Question Card -->
-                <div class="bg-darkcard rounded-2xl p-6 sm:p-8 border border-darkcardborder shadow-2xl space-y-6">
-                    <div>
-                        <div class="flex justify-between items-center mb-1">
-                            <span id="q-tag" class="text-xs font-bold text-amber-500 uppercase tracking-wider">Fråga</span>
-                            <span id="q-type-badge" class="text-[11px] font-semibold text-gray-400 bg-darkbg px-2.5 py-1 rounded-lg border border-darkcardborder">Skrivfråga</span>
-                        </div>
-                        <h3 id="q-title" class="text-xl font-bold text-white mt-1 leading-snug">Laddar...</h3>
-                        <p id="q-description" class="text-xs text-gray-400 mt-2 leading-relaxed hidden"></p>
-                    </div>
-
-                    <!-- Input / Options -->
-                    <div id="q-options-container" class="space-y-3"></div>
-
-                    <!-- Nav Buttons -->
-                    <div class="flex items-center justify-between pt-4 border-t border-darkcardborder">
-                        <button id="quiz-prev-btn" onclick="prevQuestion()" class="px-4 py-2 rounded-xl border border-darkcardborder text-xs font-semibold text-gray-400 hover:text-white transition-all flex items-center gap-2">
-                            <i class="fa-solid fa-arrow-left"></i> Föregående
-                        </button>
-                        <button id="quiz-next-btn" onclick="nextQuestion()" class="px-6 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-black font-bold text-xs shadow-lg shadow-amber-600/20 transition-all flex items-center gap-2">
-                            <span>Nästa fråga</span> <i class="fa-solid fa-arrow-right"></i>
-                        </button>
-                    </div>
-                </div>
-
+          <div class="flex items-center gap-6 text-xs font-mono">
+            <div class="flex items-center gap-1.5 text-zinc-400">
+              <i data-lucide="clock" class="w-4 h-4 text-yellow-500"></i>
+              Tid: <span id="timerDisplay" class="text-white font-bold">00:00</span>
             </div>
-
-
-            <!-- LOADING / GROQ AI GRADING SCREEN -->
-            <div id="quiz-loading-screen" class="hidden max-w-xl mx-auto bg-darkcard rounded-2xl p-8 border border-darkcardborder shadow-2xl text-center space-y-4">
-                <div class="inline-block animate-spin text-amber-500 text-4xl">
-                    <i class="fa-solid fa-brain"></i>
-                </div>
-                <h3 class="text-xl font-bold text-white">Groq AI analyserar och rättar dina svar...</h3>
-                <p class="text-xs text-gray-400 leading-relaxed">
-                    Svaren utvärderas via Groq API (Llama-3.3-70b) mot Lgr22:s kunskapskrav för kemi åk 8 med strikt bedömning på kemiska begrepp och orsakssamband.
-                </p>
+            <div class="flex items-center gap-1.5 text-zinc-400">
+              <i data-lucide="shield-check" class="w-4 h-4 text-emerald-500"></i>
+              Fusk-Skydd: <span id="cheatStatusDisplay" class="text-emerald-400 font-bold">Aktivt (0 varningar)</span>
             </div>
+            <button onclick="cancelExam()" class="px-3 py-1 bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/30 rounded text-xs transition">
+              Avbryt
+            </button>
+          </div>
+        </div>
 
+        <!-- Questions List Container -->
+        <div id="questionsContainer" class="space-y-6">
+          <!-- Dynamically inserted questions -->
+        </div>
 
-            <!-- RESULT DASHBOARD -->
-            <div id="quiz-result-screen" class="hidden max-w-4xl mx-auto space-y-6">
-                
-                <!-- Overview Header -->
-                <div class="bg-darkcard rounded-2xl p-6 sm:p-8 border border-darkcardborder shadow-2xl flex flex-col md:flex-row items-center justify-between gap-6">
-                    <div class="space-y-2 text-center md:text-left">
-                        <span class="text-xs font-bold text-amber-500 uppercase tracking-widest">Groq AI Rättning Dashboard</span>
-                        <h2 class="text-2xl sm:text-3xl font-extrabold text-white">Resultat & Betygsanalys</h2>
-                        <p id="result-summary-text" class="text-xs text-gray-400 max-w-md">
-                            Resultat utvärderat enligt Lgr22.
-                        </p>
-                    </div>
+        <!-- Submit Button Section -->
+        <div class="bg-zinc-900/80 border border-zinc-800 p-6 rounded-xl flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div>
+            <h4 class="text-sm font-bold text-white">Redo att lämna in?</h4>
+            <p class="text-xs text-zinc-400">Dina svar behandlas av AI med Skolverkets rättningsmatriser. Kontrollera din struktur innan inlämning.</p>
+          </div>
+          <button id="submitExamBtn" onclick="submitExamForGrading()" class="px-8 py-3 bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 text-black font-extrabold text-sm rounded-xl transition shadow-lg gold-glow flex items-center gap-2">
+            <i data-lucide="send" class="w-4 h-4"></i> Lämna In Prov För Rättning
+          </button>
+        </div>
 
-                    <div class="flex items-center gap-3">
-                        <div class="bg-darkbg p-4 rounded-2xl border border-darkcardborder text-center min-w-[110px]">
-                            <span class="text-[10px] text-gray-400 block uppercase font-bold">Poäng</span>
-                            <span id="result-score-val" class="text-2xl font-black text-amber-500">0 / 0</span>
-                        </div>
-                        <div class="bg-darkbg p-4 rounded-2xl border border-amber-500/30 text-center min-w-[110px]">
-                            <span class="text-[10px] text-gray-400 block uppercase font-bold">Betyg</span>
-                            <span id="result-grade-val" class="text-3xl font-black text-emerald-400">E</span>
-                        </div>
-                    </div>
-                </div>
+      </div>
 
-                <!-- Concept Analysis Section -->
-                <div class="bg-darkcard rounded-2xl p-6 border border-darkcardborder shadow-xl space-y-4">
-                    <h3 class="text-base font-bold text-white flex items-center gap-2 border-b border-darkcardborder pb-3">
-                        <i class="fa-solid fa-magnifying-glass-chart text-amber-500"></i> Begreppsanalys (Kemiska Termer)
-                    </h3>
-                    <div id="concept-analysis-box" class="text-xs text-gray-300 leading-relaxed bg-darkbg p-4 rounded-xl border border-darkcardborder">
-                        Analyserar kemiska begrepp...
-                    </div>
-                    <div id="next-step-box" class="text-xs text-amber-400 bg-amber-500/10 p-3 rounded-xl border border-amber-500/20">
-                    </div>
-                </div>
+      <!-- EVALUATION LOADING STATE -->
+      <div id="gradingLoadingArea" class="hidden text-center py-16 space-y-6 bg-zinc-900/50 border border-zinc-800 rounded-2xl">
+        <div class="w-16 h-16 border-4 border-yellow-500/20 border-t-yellow-500 rounded-full animate-spin mx-auto"></div>
+        <div>
+          <h3 class="text-xl font-bold text-white mb-2">AI-Rättning Pågår...</h3>
+          <p class="text-sm text-zinc-400 max-w-md mx-auto">
+            Groq AI analyserar dina skriftliga resonemang, sökord, argumentationsordning (Orsak &rarr; Process &rarr; Slutsats) samt kemiska begrepp.
+          </p>
+        </div>
+      </div>
 
-                <!-- Answer Breakdown -->
-                <div class="bg-darkcard rounded-2xl p-6 border border-darkcardborder shadow-xl space-y-6">
-                    <h3 class="text-base font-bold text-white border-b border-darkcardborder pb-3 flex items-center gap-2">
-                        <i class="fa-solid fa-list-check text-amber-500"></i> Detaljerad Genomgång Fråga för Fråga
-                    </h3>
-                    <div id="result-feedback-list" class="space-y-4"></div>
-                </div>
+    </section>
 
-                <div class="flex justify-center gap-4">
-                    <button onclick="resetQuiz()" class="px-8 py-3 rounded-xl bg-amber-600 hover:bg-amber-500 text-black font-bold text-sm shadow-xl shadow-amber-600/20 transition-all flex items-center gap-2">
-                        <i class="fa-solid fa-rotate-right"></i> Gör ett nytt prov
-                    </button>
-                    <button onclick="switchTab('history')" class="px-6 py-3 rounded-xl bg-darkcard border border-darkcardborder hover:border-amber-500 text-white font-bold text-sm transition-all flex items-center gap-2">
-                        <i class="fa-solid fa-history"></i> Visa Alla Sparade Prov
-                    </button>
-                </div>
+    <!-- VIEW 2: INTERACTIVE PERIODIC TABLE (PTABLE.COM EMBED) -->
+    <section id="view-ptable" class="hidden space-y-4">
+      <div class="bg-zinc-900 border border-zinc-800 p-4 rounded-xl flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <h2 class="text-lg font-bold text-white flex items-center gap-2">
+            <i data-lucide="grid" class="text-yellow-400"></i> Periodiska Systemet (Ptable Extension View)
+          </h2>
+          <p class="text-xs text-zinc-400">Interaktiv vy kopplad direkt till officiella Ptable.com på svenska.</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <a href="https://ptable.com/?lang=sv" target="_blank" rel="noopener noreferrer" class="px-3 py-1.5 bg-zinc-800 hover:bg-zinc-700 text-xs text-yellow-400 rounded-lg border border-yellow-500/20 flex items-center gap-1.5">
+            <i data-lucide="external-link" class="w-3.5 h-3.5"></i> Öppna i nytt fönster
+          </a>
+          <button onclick="reloadPtable()" class="px-3 py-1.5 bg-zinc-800 hover:bg-zinc-700 text-xs text-zinc-300 rounded-lg border border-zinc-700 flex items-center gap-1.5">
+            <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> Ladda Om
+          </button>
+        </div>
+      </div>
 
+      <!-- IFRAME CONTAINER -->
+      <div class="w-full h-[750px] bg-black rounded-xl border border-zinc-800 overflow-hidden relative">
+        <iframe id="ptableIframe" src="https://ptable.com/?lang=sv" class="w-full h-full border-0" title="Ptable Interactive Periodic Table"></iframe>
+      </div>
+    </section>
+
+    <!-- VIEW 3: STUDENT RESULT & DASHBOARD -->
+    <section id="view-dash" class="hidden space-y-6">
+      
+      <!-- HEADER DASHBOARD -->
+      <div class="bg-zinc-900 border border-zinc-800 p-6 rounded-2xl flex flex-col md:flex-row items-center justify-between gap-6">
+        <div>
+          <span class="text-xs font-mono font-bold text-yellow-400 bg-yellow-500/10 px-2.5 py-1 rounded border border-yellow-500/20">SENASTE RÄTTNING</span>
+          <h2 class="text-2xl font-bold text-white mt-2" id="dashExamTitle">Ingen provhistorik ännu</h2>
+          <p class="text-xs text-zinc-400 mt-1" id="dashExamSub">Genomför ett prov för att se din detaljerade Skolverket-analys.</p>
+        </div>
+
+        <!-- Grade Display Box -->
+        <div id="dashGradeBox" class="hidden flex items-center gap-6 bg-black/60 border border-zinc-800 p-4 rounded-xl">
+          <div class="text-center">
+            <div class="text-xs text-zinc-500 font-mono">ERHÅLLET BETYG</div>
+            <div id="dashGradeBadge" class="text-4xl font-extrabold text-yellow-400 font-mono mt-1">-</div>
+          </div>
+          <div class="border-l border-zinc-800 pl-6 text-center">
+            <div class="text-xs text-zinc-500 font-mono">TOTAL POÄNG</div>
+            <div id="dashScoreBadge" class="text-2xl font-bold text-white mt-1">0 / 0</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ANALYTICS CARDS GRID -->
+      <div id="dashContentArea" class="hidden space-y-6">
+        
+        <!-- Begreppsanalys & Strukturanalys -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          
+          <!-- Begrepp -->
+          <div class="bg-zinc-900 border border-zinc-800 p-5 rounded-xl space-y-3">
+            <h3 class="text-sm font-bold text-white flex items-center gap-2">
+              <i data-lucide="book-open" class="text-emerald-400 w-4 h-4"></i> Begreppsanalys (Naturvetenskapliga Ord)
+            </h3>
+            <p class="text-xs text-zinc-400">Granskning av hur väl du använt ämnesspecifika begrepp i dina skriftliga svar:</p>
+            <div id="conceptsList" class="space-y-2 text-xs">
+              <!-- Dynamically populated -->
             </div>
+          </div>
 
-        </section>
-
-
-        <!-- TAB 3: PROVHISTORIK -->
-        <section id="tab-history" class="hidden space-y-6">
-            <div class="bg-darkcard rounded-2xl p-6 sm:p-8 border border-darkcardborder shadow-2xl space-y-6 max-w-4xl mx-auto">
-                <div class="flex justify-between items-center border-b border-darkcardborder pb-4">
-                    <div>
-                        <h2 class="text-xl font-bold text-white flex items-center gap-2">
-                            <i class="fa-solid fa-database text-amber-500"></i> Inlämnade Prov i Databasen
-                        </h2>
-                        <p class="text-xs text-gray-400">Historik över alla prov som genomförts och rättats av Groq AI.</p>
-                    </div>
-                    <button onclick="clearHistory()" class="px-3 py-1.5 rounded-lg bg-red-500/10 border border-red-500/30 text-red-400 text-xs font-semibold hover:bg-red-500 hover:text-white transition-all">
-                        <i class="fa-solid fa-trash mr-1"></i> Rensa Historik
-                    </button>
-                </div>
-
-                <div id="history-list" class="space-y-3">
-                </div>
+          <!-- Struktur & Logik -->
+          <div class="bg-zinc-900 border border-zinc-800 p-5 rounded-xl space-y-3">
+            <h3 class="text-sm font-bold text-white flex items-center gap-2">
+              <i data-lucide="list-checks" class="text-amber-400 w-4 h-4"></i> Resonemang- & Strukturanalys
+            </h3>
+            <p class="text-xs text-zinc-400">Analys av orsak-verkan kedjor (Steg 1: Orsak &rarr; Steg 2: Process &rarr; Steg 3: Slutsats):</p>
+            <div id="structureFeedbackList" class="space-y-2 text-xs">
+              <!-- Dynamically populated -->
             </div>
-        </section>
-
-
-        <!-- TAB 4: ADMIN PANEL -->
-        <section id="tab-admin" class="hidden space-y-6">
-            
-            <!-- ADMIN LOGIN SCREEN -->
-            <div id="admin-login-screen" class="max-w-md mx-auto bg-darkcard rounded-2xl p-8 border border-darkcardborder shadow-2xl space-y-6 text-center">
-                <div class="w-16 h-16 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-500 flex items-center justify-center text-2xl mx-auto glow-amber">
-                    <i class="fa-solid fa-lock"></i>
-                </div>
-                <div>
-                    <h3 class="text-xl font-bold text-white">Admin Inloggning</h3>
-                    <p class="text-xs text-gray-400 mt-1">Ange administratörslösenord för att hantera användare och IP-blockeringar.</p>
-                </div>
-
-                <div class="space-y-4">
-                    <input type="password" id="admin-password-input" class="w-full px-4 py-3 rounded-xl bg-darkbg border border-darkcardborder text-white text-sm focus:outline-none focus:border-amber-500" placeholder="Lösenord...">
-                    <button onclick="loginAdmin()" class="w-full py-3 rounded-xl bg-amber-600 hover:bg-amber-500 text-black font-bold text-xs uppercase tracking-wider transition-all shadow-lg shadow-amber-600/20">
-                        Logga in som Admin
-                    </button>
-                    <p id="admin-login-error" class="text-xs text-red-400 hidden font-semibold"></p>
-                </div>
-            </div>
-
-            <!-- ADMIN DASHBOARD (AFTER LOGIN) -->
-            <div id="admin-dashboard" class="hidden max-w-5xl mx-auto space-y-6">
-                
-                <div class="flex items-center justify-between border-b border-darkcardborder pb-4">
-                    <div>
-                        <h2 class="text-2xl font-extrabold text-white flex items-center gap-2">
-                            <i class="fa-solid fa-shield-halved text-amber-500"></i> Admin Instrumentpanel
-                        </h2>
-                        <p class="text-xs text-gray-400">Realtidsöversikt över besökare, IP-adresser och säkerhet.</p>
-                    </div>
-                    <button onclick="logoutAdmin()" class="px-4 py-2 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 text-xs font-bold hover:bg-red-500 hover:text-white transition-all">
-                        Logga ut
-                    </button>
-                </div>
-
-                <!-- Manual IP Block Control -->
-                <div class="bg-darkcard rounded-2xl p-6 border border-darkcardborder shadow-xl space-y-4">
-                    <h3 class="text-sm font-bold text-white flex items-center gap-2">
-                        <i class="fa-solid fa-user-slash text-red-400"></i> Manuell IP-Blockering
-                    </h3>
-                    <div class="flex gap-3">
-                        <input type="text" id="manual-block-ip" placeholder="Exempel: 192.168.1.1" class="flex-1 px-4 py-2.5 rounded-xl bg-darkbg border border-darkcardborder text-xs text-white focus:outline-none focus:border-red-500">
-                        <button onclick="blockManualIP()" class="px-5 py-2.5 rounded-xl bg-red-600 hover:bg-red-500 text-white font-bold text-xs transition-all shadow-lg shadow-red-600/20">
-                            Blockera IP
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Blocked IPs List -->
-                <div class="bg-darkcard rounded-2xl p-6 border border-darkcardborder shadow-xl space-y-4">
-                    <h3 class="text-sm font-bold text-white flex items-center gap-2">
-                        <i class="fa-solid fa-ban text-red-500"></i> Blockerade IP-Adresser (<span id="blocked-count">0</span>)
-                    </h3>
-                    <div id="blocked-ips-list" class="flex flex-wrap gap-2">
-                    </div>
-                </div>
-
-                <!-- Visitor Log Table -->
-                <div class="bg-darkcard rounded-2xl p-6 border border-darkcardborder shadow-xl space-y-4">
-                    <div class="flex justify-between items-center">
-                        <h3 class="text-sm font-bold text-white flex items-center gap-2">
-                            <i class="fa-solid fa-users-viewfinder text-amber-500"></i> Besökslogg & Riktiga IP-Adresser
-                        </h3>
-                        <button onclick="clearVisitorLogs()" class="text-xs text-gray-400 hover:text-white">Rensa logg</button>
-                    </div>
-
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left text-xs text-gray-300">
-                            <thead class="bg-darkbg text-gray-400 uppercase font-mono border-b border-darkcardborder">
-                                <tr>
-                                    <th class="p-3">IP-Adress</th>
-                                    <th class="p-3">Tidsstämpel</th>
-                                    <th class="p-3">Aktivitet</th>
-                                    <th class="p-3">Status</th>
-                                    <th class="p-3 text-right">Åtgärd</th>
-                                </tr>
-                            </thead>
-                            <tbody id="visitor-log-tbody" class="divide-y divide-darkcardborder">
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-            </div>
-
-        </section>
-
-    </main>
-
-
-    <script>
-        /* -------------------------------------------------------------
-           1. HARDCODED GROQ API KEY & ADMIN PASSWORD
-        ------------------------------------------------------------- */
-        const GROQ_API_KEY = "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";
-        const GROQ_ENDPOINT = "https://api.groq.com/openai/v1/chat/completions";
-        const GROQ_MODEL = "llama-3.3-70b-versatile";
-        const ADMIN_PASS = 'DNOWFI"¤%RU(=EQfew23¨öló312';
-
-        /* -------------------------------------------------------------
-           2. CLIENT IP & ACCESS CONTROL (SECURITY)
-        ------------------------------------------------------------- */
-        let currentClientIP = 'Okänd IP';
-        let isAdminLoggedIn = false;
-
-        async function initClientIP() {
-            try {
-                const res = await fetch('https://api.ipify.org?format=json');
-                const data = await res.json();
-                currentClientIP = data.ip;
-            } catch (e) {
-                console.warn('Gick inte att hämta IP från ipify, använder fallback');
-                currentClientIP = '127.0.0.1';
-            }
-
-            logVisitorActivity(currentClientIP, 'Sidvisning');
-            checkIfIPBlocked();
-        }
-
-        function checkIfIPBlocked() {
-            const blockedIPs = JSON.parse(localStorage.getItem('blocked_ips') || '[]');
-            if (blockedIPs.includes(currentClientIP)) {
-                document.getElementById('blocked-ip-display').innerText = currentClientIP;
-                document.getElementById('blocked-screen').classList.remove('hidden');
-            } else {
-                document.getElementById('blocked-screen').classList.add('hidden');
-            }
-        }
-
-        function logVisitorActivity(ip, activity) {
-            let logs = JSON.parse(localStorage.getItem('visitor_logs') || '[]');
-            logs.unshift({
-                ip: ip,
-                time: new Date().toLocaleString('sv-SE'),
-                activity: activity
-            });
-            // Keep max 50 logs
-            if (logs.length > 50) logs = logs.slice(0, 50);
-            localStorage.setItem('visitor_logs', JSON.stringify(logs));
-        }
-
-
-        /* -------------------------------------------------------------
-           3. EXAM QUESTION DATABASE
-        ------------------------------------------------------------- */
-        const quizQuestions = [
-            // E-PROV
-            {
-                id: 101,
-                level: 'E',
-                examType: 'E',
-                type: 'mc',
-                title: 'Vad visar atomnumret för ett grundämne i periodiska systemet?',
-                desc: 'Välj det alternativ som stämmer exakt.',
-                options: [
-                    'Antalet protoner i atomkärnan',
-                    'Antalet neutroner i atomkärnan',
-                    'Antalet elektronskal runt kärnan',
-                    'Atomens totala vikt i gram'
-                ],
-                correct: 0,
-                explanation: 'Atomnumret anger antalet positivt laddade protoner i atomkärnan.'
-            },
-            {
-                id: 102,
-                level: 'E',
-                examType: 'E',
-                type: 'mc',
-                title: 'Vilken grupp kallas för alkalimetaller?',
-                desc: 'Välj rätt grupp i periodiska systemet.',
-                options: [
-                    'Grupp 18',
-                    'Grupp 1 (förutom väte)',
-                    'Grupp 17',
-                    'Grupp 2'
-                ],
-                correct: 1,
-                explanation: 'Alkalimetallerna finns i grupp 1 och har alla 1 valenselektron.'
-            },
-            {
-                id: 103,
-                level: 'E',
-                examType: 'E',
-                type: 'text',
-                title: 'Kortfråga: Valenselektroner för Natrium',
-                desc: 'Natrium (Na) har atomnummer 11. Hur många valenselektroner har natrium, och i vilken grupp finns ämnet?',
-                modelAnswer: 'Natrium har 1 valenselektron i sitt yttersta skal (elektronfördelning 2, 8, 1) och tillhör grupp 1.',
-                rubricKeywords: ['1', 'valenselektron', 'grupp 1']
-            },
-
-            // C-PROV
-            {
-                id: 201,
-                level: 'C',
-                examType: 'C',
-                type: 'mc',
-                title: 'Vad har alla grundämnen i samma GRUPP gemensamt?',
-                desc: 'Välj den kemiska egenskapen som stämmer.',
-                options: [
-                    'Samma antal elektronskal',
-                    'Lika många valenselektroner i yttersta skalet',
-                    'Samma atommassa',
-                    'Exakt samma antal protoner'
-                ],
-                correct: 1,
-                explanation: 'Ämnen i samma grupp har lika många valenselektroner.'
-            },
-            {
-                id: 202,
-                level: 'C',
-                examType: 'C',
-                type: 'text',
-                title: 'Varför är ädelgaser reaktionströga?',
-                desc: 'Förklara med kemiska begrepp varför ädelgaserna i grupp 18 sällan reagerar med andra ämnen.',
-                modelAnswer: 'Ädelgaser har sitt yttersta elektronskal helt fullt (ädelgasstruktur). De är kemiskt stabila.',
-                rubricKeywords: ['fullt', 'skal', 'ädelgasstruktur', 'stabil', 'valenselektroner']
-            },
-            {
-                id: 203,
-                level: 'C',
-                examType: 'C',
-                type: 'text',
-                title: 'Skillnad mellan atom och jon',
-                desc: 'Beskriv skillnaden på en neutral natriumatom (Na) och en natriumjon (Na+). Förklara vad som hänt med elektronerna.',
-                modelAnswer: 'Natriumatomen har 11 protoner och 11 elektroner. Den lämnar ifrån sig sin valenselektron för att få fullt skal och blir en positivt laddad jon (Na+).',
-                rubricKeywords: ['laddad', 'elektron', 'lämnar', 'positiv', 'jon']
-            },
-
-            // A-PROV
-            {
-                id: 301,
-                level: 'A',
-                examType: 'A',
-                type: 'text',
-                title: 'Reaktivitetstrend i Grupp 1 (Alkalimetaller)',
-                desc: 'Jämför Natrium (Na) och Kalium (K). Vilket ämne reagerar HÄFTIGAST med vatten och VARFÖR? Resonera med begreppen elektronskal, avstånd till atomkärnan och attraktionskraft.',
-                modelAnswer: 'Kalium reagerar häftigare. Kalium har fler elektronskal vilket gör att avståndet mellan kärnan och valenselektronen är större. Attraktionskraften blir svagare och elektron släpps lättare.',
-                rubricKeywords: ['kalium', 'skal', 'avstånd', 'kärna', 'attraktionskraft', 'svagare', 'släpper']
-            },
-            {
-                id: 302,
-                level: 'A',
-                examType: 'A',
-                type: 'text',
-                title: 'Jonbindning och Salters bildning (NaCl)',
-                desc: 'Redogör för vad som händer när natrium (Na) och klor (Cl) reagerar och bildar koksalt (NaCl). Beskriv elektronövergången och jonbindningen.',
-                modelAnswer: 'Natrium avger sin valenselektron till klor. Natrium blir positiv (Na+) och klor blir negativ (Cl-). De motställda laddningarna dras till varandra i en jonbindning.',
-                rubricKeywords: ['avger', 'tar upp', 'valenselektron', 'positiv', 'negativ', 'jonbindning']
-            }
-        ];
-
-
-        /* -------------------------------------------------------------
-           4. STATE & NAVIGATION
-        ------------------------------------------------------------- */
-        let activeExamType = 'E';
-        let currentQuestions = [];
-        let currentQIdx = 0;
-        let userAnswers = {};
-        let timerInterval = null;
-        let timerSeconds = 0;
-
-        function switchTab(tab) {
-            const ptableTab = document.getElementById('tab-ptable');
-            const quizTab = document.getElementById('tab-quiz');
-            const historyTab = document.getElementById('tab-history');
-            const adminTab = document.getElementById('tab-admin');
-
-            const ptableBtn = document.getElementById('nav-ptable-btn');
-            const quizBtn = document.getElementById('nav-quiz-btn');
-            const historyBtn = document.getElementById('nav-history-btn');
-            const adminBtn = document.getElementById('nav-admin-btn');
-
-            ptableTab.classList.add('hidden');
-            quizTab.classList.add('hidden');
-            historyTab.classList.add('hidden');
-            adminTab.classList.add('hidden');
-
-            ptableBtn.className = "px-4 py-1.5 rounded-lg text-sm font-semibold text-gray-400 hover:text-white transition-all flex items-center gap-2";
-            quizBtn.className = "px-4 py-1.5 rounded-lg text-sm font-semibold text-gray-400 hover:text-white transition-all flex items-center gap-2";
-            historyBtn.className = "px-4 py-1.5 rounded-lg text-sm font-semibold text-gray-400 hover:text-white transition-all flex items-center gap-2";
-            adminBtn.className = "px-3 py-1.5 rounded-lg text-sm font-semibold text-amber-500 hover:text-white transition-all flex items-center gap-2 border border-amber-500/30";
-
-            if (tab === 'ptable') {
-                ptableTab.classList.remove('hidden');
-                ptableBtn.className = "px-4 py-1.5 rounded-lg text-sm font-semibold transition-all flex items-center gap-2 bg-amber-600 text-black shadow-md font-bold";
-            } else if (tab === 'quiz') {
-                quizTab.classList.remove('hidden');
-                quizBtn.className = "px-4 py-1.5 rounded-lg text-sm font-semibold transition-all flex items-center gap-2 bg-amber-600 text-black shadow-md font-bold";
-            } else if (tab === 'history') {
-                historyTab.classList.remove('hidden');
-                historyBtn.className = "px-4 py-1.5 rounded-lg text-sm font-semibold transition-all flex items-center gap-2 bg-amber-600 text-black shadow-md font-bold";
-                renderHistory();
-            } else if (tab === 'admin') {
-                adminTab.classList.remove('hidden');
-                adminBtn.className = "px-3 py-1.5 rounded-lg text-sm font-semibold transition-all flex items-center gap-2 bg-amber-600 text-black shadow-md font-bold border-0";
-                if (isAdminLoggedIn) {
-                    renderAdminDashboard();
-                }
-            }
-        }
-
-        function togglePtableSource() {
-            const iframeCont = document.getElementById('iframe-container');
-            const fallbackCont = document.getElementById('fallback-container');
-
-            if (iframeCont.classList.contains('hidden')) {
-                iframeCont.classList.remove('hidden');
-                fallbackCont.classList.add('hidden');
-            } else {
-                iframeCont.classList.add('hidden');
-                fallbackCont.classList.remove('hidden');
-                renderFallbackTable();
-            }
-        }
-
-
-        /* -------------------------------------------------------------
-           5. FALLBACK PTABLE GRID
-        ------------------------------------------------------------- */
-        const fallbackElements = [
-            { num: 1, sym: 'H', name: 'Väte', p: 1, g: 1 },
-            { num: 2, sym: 'He', name: 'Helium', p: 1, g: 18 },
-            { num: 3, sym: 'Li', name: 'Litium', p: 2, g: 1 },
-            { num: 4, sym: 'Be', name: 'Beryllium', p: 2, g: 2 },
-            { num: 5, sym: 'B', name: 'Bor', p: 2, g: 13 },
-            { num: 6, sym: 'C', name: 'Kol', p: 2, g: 14 },
-            { num: 7, sym: 'N', name: 'Kväve', p: 2, g: 15 },
-            { num: 8, sym: 'O', name: 'Syre', p: 2, g: 16 },
-            { num: 9, sym: 'F', name: 'Fluor', p: 2, g: 17 },
-            { num: 10, sym: 'Ne', name: 'Neon', p: 2, g: 18 },
-            { num: 11, sym: 'Na', name: 'Natrium', p: 3, g: 1 },
-            { num: 12, sym: 'Mg', name: 'Magnesium', p: 3, g: 2 },
-            { num: 13, sym: 'Al', name: 'Aluminium', p: 3, g: 13 },
-            { num: 14, sym: 'Si', name: 'Kisel', p: 3, g: 14 },
-            { num: 15, sym: 'P', name: 'Fosfor', p: 3, g: 15 },
-            { num: 16, sym: 'S', name: 'Svavel', p: 3, g: 16 },
-            { num: 17, sym: 'Cl', name: 'Klor', p: 3, g: 17 },
-            { num: 18, sym: 'Ar', name: 'Argon', p: 3, g: 18 },
-            { num: 19, sym: 'K', name: 'Kalium', p: 4, g: 1 },
-            { num: 20, sym: 'Ca', name: 'Kalcium', p: 4, g: 2 }
-        ];
-
-        function renderFallbackTable() {
-            const grid = document.getElementById('ptable-grid');
-            grid.innerHTML = '';
-
-            const map = {};
-            fallbackElements.forEach(e => map[`${e.p}-${e.g}`] = e);
-
-            for (let p = 1; p <= 4; p++) {
-                for (let g = 1; g <= 18; g++) {
-                    const el = map[`${p}-${g}`];
-                    if (el) {
-                        const card = document.createElement('div');
-                        card.className = "element-card bg-darkcard border border-darkcardborder rounded p-1 flex flex-col justify-between text-center";
-                        card.innerHTML = `
-                            <span class="text-[8px] text-gray-500 font-mono">${el.num}</span>
-                            <span class="text-sm font-bold text-amber-500 font-mono">${el.sym}</span>
-                            <span class="text-[8px] text-gray-300 truncate">${el.name}</span>
-                        `;
-                        grid.appendChild(card);
-                    } else {
-                        const spacer = document.createElement('div');
-                        spacer.className = "aspect-square opacity-0";
-                        grid.appendChild(spacer);
-                    }
-                }
-            }
-        }
-
-
-        /* -------------------------------------------------------------
-           6. EXAM LOGIC
-        ------------------------------------------------------------- */
-        function startQuiz(examType) {
-            activeExamType = examType;
-            logVisitorActivity(currentClientIP, `Startade ${examType}-Prov`);
-
-            if (examType === 'ALL') {
-                currentQuestions = [...quizQuestions];
-            } else {
-                currentQuestions = quizQuestions.filter(q => q.examType === examType);
-            }
-
-            currentQIdx = 0;
-            userAnswers = {};
-            timerSeconds = 0;
-
-            document.getElementById('quiz-select-screen').classList.add('hidden');
-            document.getElementById('quiz-result-screen').classList.add('hidden');
-            document.getElementById('quiz-active-screen').classList.remove('hidden');
-
-            if (timerInterval) clearInterval(timerInterval);
-            timerInterval = setInterval(() => {
-                timerSeconds++;
-                const m = String(Math.floor(timerSeconds / 60)).padStart(2, '0');
-                const s = String(timerSeconds % 60).padStart(2, '0');
-                document.getElementById('quiz-timer').innerText = `${m}:${s}`;
-            }, 1000);
-
-            renderQuestion();
-        }
-
-        function renderQuestion() {
-            const q = currentQuestions[currentQIdx];
-            const total = currentQuestions.length;
-
-            document.getElementById('quiz-progress-text').innerText = `Fråga ${currentQIdx + 1} av ${total}`;
-            document.getElementById('quiz-progress-bar').style.width = `${((currentQIdx + 1) / total) * 100}%`;
-
-            const badge = document.getElementById('quiz-level-badge');
-            badge.innerText = `${q.level}-Nivå`;
-            if (q.level === 'E') badge.className = "px-2.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-bold text-xs";
-            else if (q.level === 'C') badge.className = "px-2.5 py-0.5 rounded bg-blue-500/20 text-blue-400 font-bold text-xs";
-            else badge.className = "px-2.5 py-0.5 rounded bg-purple-500/20 text-purple-400 font-bold text-xs";
-
-            document.getElementById('q-tag').innerText = `Fråga ${currentQIdx + 1} • ${q.level}-Nivå`;
-            document.getElementById('q-type-badge').innerText = q.type === 'mc' ? 'Kryssfråga' : 'Skrivfråga';
-            document.getElementById('q-title').innerText = q.title;
-
-            const descElem = document.getElementById('q-description');
-            if (q.desc) {
-                descElem.innerText = q.desc;
-                descElem.classList.remove('hidden');
-            } else {
-                descElem.classList.add('hidden');
-            }
-
-            const container = document.getElementById('q-options-container');
-            container.innerHTML = '';
-
-            if (q.type === 'mc') {
-                q.options.forEach((optText, idx) => {
-                    const btn = document.createElement('button');
-                    const isSelected = userAnswers[q.id] === idx;
-
-                    btn.className = `w-full text-left p-4 rounded-xl border transition-all flex items-center justify-between ${
-                        isSelected 
-                            ? 'bg-amber-600/20 border-amber-500 text-white font-semibold' 
-                            : 'bg-darkbg border-darkcardborder text-gray-300 hover:border-gray-600'
-                    }`;
-
-                    btn.innerHTML = `
-                        <span class="text-xs sm:text-sm">${optText}</span>
-                        <div class="w-5 h-5 rounded-full border border-gray-600 flex items-center justify-center ${isSelected ? 'border-amber-500 bg-amber-500 text-black' : ''}">
-                            ${isSelected ? '<i class="fa-solid fa-check text-xs"></i>' : ''}
-                        </div>
-                    `;
-
-                    btn.onclick = () => {
-                        userAnswers[q.id] = idx;
-                        renderQuestion();
-                    };
-
-                    container.appendChild(btn);
-                });
-            } else {
-                const textarea = document.createElement('textarea');
-                textarea.className = "w-full h-40 p-4 rounded-xl bg-darkbg border border-darkcardborder text-white text-xs sm:text-sm focus:outline-none focus:border-amber-500 leading-relaxed resize-none";
-                textarea.placeholder = "Skriv ditt förklarande svar här med kemiska facktermer...";
-                textarea.value = userAnswers[q.id] || '';
-
-                textarea.oninput = (e) => {
-                    userAnswers[q.id] = e.target.value;
-                };
-
-                container.appendChild(textarea);
-            }
-
-            document.getElementById('quiz-prev-btn').disabled = currentQIdx === 0;
-            document.getElementById('quiz-prev-btn').style.opacity = currentQIdx === 0 ? '0.4' : '1';
-
-            const nextBtn = document.getElementById('quiz-next-btn');
-            if (currentQIdx === currentQuestions.length - 1) {
-                nextBtn.innerHTML = `<span>Lämna in prov</span> <i class="fa-solid fa-paper-plane"></i>`;
-            } else {
-                nextBtn.innerHTML = `<span>Nästa fråga</span> <i class="fa-solid fa-arrow-right"></i>`;
-            }
-        }
-
-        function prevQuestion() {
-            if (currentQIdx > 0) {
-                currentQIdx--;
-                renderQuestion();
-            }
-        }
-
-        function nextQuestion() {
-            if (currentQIdx < currentQuestions.length - 1) {
-                currentQIdx++;
-                renderQuestion();
-            } else {
-                finishAndGradeExam();
-            }
-        }
-
-
-        /* -------------------------------------------------------------
-           7. GROQ AI EVALUATOR & RESULT PROCESSING
-        ------------------------------------------------------------- */
-        async function finishAndGradeExam() {
-            clearInterval(timerInterval);
-
-            document.getElementById('quiz-active-screen').classList.add('hidden');
-            document.getElementById('quiz-loading-screen').classList.remove('hidden');
-
-            logVisitorActivity(currentClientIP, `Lämnade in ${activeExamType}-Prov för rättning`);
-
-            const formattedExamData = currentQuestions.map(q => {
-                let userVal = userAnswers[q.id];
-                let displayAns = '';
-                if (q.type === 'mc') {
-                    displayAns = userVal !== undefined ? q.options[userVal] : 'Ej besvarad';
-                } else {
-                    displayAns = userVal && userVal.trim() ? userVal : 'Ej besvarad';
-                }
-
-                return {
-                    id: q.id,
-                    level: q.level,
-                    type: q.type,
-                    title: q.title,
-                    userAnswer: displayAns,
-                    modelAnswer: q.modelAnswer || q.options?.[q.correct]
-                };
-            });
-
-            const promptText = `RÄTTA PROVEN MED BETYG 8ANS ANVÄNDERNS SVAR OCH FRÅGOR VILKET PROV ETC
-
-Provtyp: ${activeExamType}-Prov (Max uppnåeligt betyg: ${activeExamType === 'E' ? 'E' : (activeExamType === 'C' ? 'C' : 'A')})
-
-Data:
-${JSON.stringify(formattedExamData, null, 2)}
-
-INSTRUKTIONER FÖR RÄTTNING (LGR22 KEMI ÅK 8):
-1. Bedöm elevens skriftliga svar STRIKT efter kemiska facktermer (elektronskal, valenselektroner, attraktionskraft, joner, ädelgasstruktur).
-2. Tilldela poäng per fråga (E: max 1p, C: max 2p, A: max 3p).
-3. Maxbetyg för E-prov är E, maxbetyg för C-prov är C!
-4. Ge begreppsanalys och råd för nästa betygssteg.
-
-RETURNERA ENBART VALID JSON I FÖLJANDE FORM UTAN MARKDOWN:
-{
-    "finalGrade": "E",
-    "totalScore": 4,
-    "maxPossibleScore": 6,
-    "conceptAnalysis": "Analystext...",
-    "nextStepAdvice": "Träna mer på...",
-    "evaluations": [
+          </div>
+
+        </div>
+
+        <!-- Detailed Question Grading Breakdown -->
+        <div class="bg-zinc-900 border border-zinc-800 p-6 rounded-xl space-y-4">
+          <h3 class="text-lg font-bold text-white flex items-center gap-2">
+            <i data-lucide="file-check-2" class="text-yellow-400"></i> Detaljerad Genomgång Per Fråga
+          </h3>
+          <div id="dashQuestionsReview" class="space-y-4">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- VIEW 4: TEACHER & CLASS DASHBOARD -->
+    <section id="view-teacher" class="hidden space-y-6">
+      <div class="bg-zinc-900 border border-zinc-800 p-6 rounded-2xl flex items-center justify-between">
+        <div>
+          <h2 class="text-2xl font-bold text-white flex items-center gap-2">
+            <i data-lucide="users" class="text-yellow-400"></i> Lärardashboard & Klassöversikt
+          </h2>
+          <p class="text-xs text-zinc-400 mt-1">Översikt över elevernas prestationer, vanliga missuppfattningar och fuskrisker.</p>
+        </div>
+        <button onclick="clearClassHistory()" class="px-3 py-1.5 bg-red-500/10 text-red-400 border border-red-500/30 rounded-lg text-xs hover:bg-red-500/20">
+          Rensa Klasshistorik
+        </button>
+      </div>
+
+      <!-- STATS SUMMARY -->
+      <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
+        <div class="bg-zinc-900 border border-zinc-800 p-4 rounded-xl">
+          <div class="text-xs text-zinc-500 font-mono">ANTAL INLÄMNADE PROV</div>
+          <div id="teacherTotalExams" class="text-2xl font-bold text-white mt-1">0</div>
+        </div>
+        <div class="bg-zinc-900 border border-zinc-800 p-4 rounded-xl">
+          <div class="text-xs text-zinc-500 font-mono">MEDELPOÄNG</div>
+          <div id="teacherAvgScore" class="text-2xl font-bold text-yellow-400 mt-1">0%</div>
+        </div>
+        <div class="bg-zinc-900 border border-zinc-800 p-4 rounded-xl">
+          <div class="text-xs text-zinc-500 font-mono">VANLIGASTE BETYG</div>
+          <div id="teacherMostCommonGrade" class="text-2xl font-bold text-emerald-400 font-mono mt-1">-</div>
+        </div>
+        <div class="bg-zinc-900 border border-zinc-800 p-4 rounded-xl">
+          <div class="text-xs text-zinc-500 font-mono">FLERTALS STRUKTURMISTAG</div>
+          <div id="teacherStructureWarns" class="text-2xl font-bold text-red-400 mt-1">0</div>
+        </div>
+      </div>
+
+      <!-- EXAM SUBMISSIONS LOG -->
+      <div class="bg-zinc-900 border border-zinc-800 p-6 rounded-xl space-y-4">
+        <h3 class="text-lg font-bold text-white">Inlämnade Elevprov</h3>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs border-collapse">
+            <thead>
+              <tr class="border-b border-zinc-800 text-zinc-400 font-mono">
+                <th class="p-3">Tid</th>
+                <th class="p-3">Provtyp</th>
+                <th class="p-3">Poäng</th>
+                <th class="p-3">Betyg</th>
+                <th class="p-3">Fusk-Risk</th>
+                <th class="p-3">Klient IP</th>
+              </tr>
+            </thead>
+            <tbody id="teacherTableBody" class="divide-y divide-zinc-800/50 text-zinc-300">
+              <tr>
+                <td colspan="6" class="p-4 text-center text-zinc-500">Inga prov inlämnade ännu.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ADMIN MODAL (PASSWORD PROTECTED) -->
+  <div id="adminModal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-zinc-900 border border-zinc-800 rounded-2xl max-w-2xl w-full p-6 space-y-6 shadow-2xl">
+      
+      <div class="flex items-center justify-between border-b border-zinc-800 pb-4">
+        <h3 class="text-xl font-bold text-white flex items-center gap-2">
+          <i data-lucide="shield" class="text-yellow-400"></i> Systemadministration & IP-Spärr
+        </h3>
+        <button onclick="closeAdminModal()" class="text-zinc-400 hover:text-white">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <!-- Password Auth State -->
+      <div id="adminAuthSection" class="space-y-4">
+        <p class="text-xs text-zinc-400">Ange administratörslösenord för att hantera blockerade IP-adresser och systeminställningar.</p>
+        <div class="space-y-2">
+          <input type="password" id="adminPasswordInput" placeholder="Ange lösenord..." class="w-full bg-black border border-zinc-800 rounded-lg p-3 text-sm text-white focus:border-yellow-500 outline-none">
+          <p id="adminAuthError" class="text-xs text-red-400 hidden">Felaktigt lösenord.</p>
+        </div>
+        <button onclick="authenticateAdmin()" class="w-full py-2.5 bg-yellow-500 hover:bg-yellow-400 text-black font-bold text-xs rounded-lg transition">
+          Lås upp Adminpanel
+        </button>
+      </div>
+
+      <!-- Admin Panel Controls (Hidden until unlocked) -->
+      <div id="adminControlsSection" class="hidden space-y-6">
+        
+        <!-- Manual IP Block Box -->
+        <div class="bg-black/50 p-4 rounded-xl border border-zinc-800 space-y-3">
+          <h4 class="text-sm font-bold text-white">Blockera Ny IP-Adress</h4>
+          <div class="flex gap-2">
+            <input type="text" id="manualIpInput" placeholder="Ex. 192.168.1.50" class="flex-1 bg-zinc-900 border border-zinc-800 rounded-lg p-2.5 text-xs text-white font-mono outline-none">
+            <button onclick="blockManualIp()" class="px-4 py-2.5 bg-red-600 hover:bg-red-500 text-white font-bold text-xs rounded-lg transition">
+              Spärra IP
+            </button>
+          </div>
+        </div>
+
+        <!-- Blocked IPs List -->
+        <div class="space-y-3">
+          <h4 class="text-sm font-bold text-white">Aktiva IP-Spärrar</h4>
+          <div id="blockedIpsList" class="space-y-2 max-h-48 overflow-y-auto custom-scrollbar">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="bg-[#121318] border-t border-zinc-800 py-4 text-center text-xs text-zinc-500">
+    KemiQuiz Pro &copy; 2026 - Anpassat för Skolverkets Läroplan (Lgr22 Åk 8). Drevs med Groq AI.
+  </footer>
+
+  <!-- APPLICATION SCRIPT LOGIC -->
+  <script>
+    // --- GLOBAL CONFIGURATION & CONSTANTS ---
+    const GROQ_API_KEY = "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";
+    const ADMIN_PASS = 'DNOWFI"¤%RU(=EQfew23¨öló312';
+    
+    let currentUserIp = "Laddar...";
+    let currentExam = null;
+    let examTimerInterval = null;
+    let examSeconds = 0;
+    let cheatWarnings = 0;
+
+    // --- QUESTION BANK (SWEDISH YEAR 8 CHEMISTRY) ---
+    const QUESTION_BANK = {
+      E: [
         {
-            "questionId": 101,
-            "score": 1,
-            "maxScore": 1,
-            "feedback": "Korrekt svar."
+          id: "E1",
+          level: "E",
+          type: "mcq",
+          question: "Vilka tre partiklar bygger upp en atom?",
+          options: [
+            "Protoner, neutroner och elektroner",
+            "Molekyler, joner och kristaller",
+            "Atomer, grundämnen och föreningar",
+            "Kvarkar, fotoner och graviter"
+          ],
+          correct: 0,
+          explanation: "En atom består av en kärna med positivt laddade protoner och oladdade neutroner, samt negativt laddade elektroner i elektronskal runt kärnan."
+        },
+        {
+          id: "E2",
+          level: "E",
+          type: "mcq",
+          question: "Vad anger ett grundämnes atomnummer i det periodiska systemet?",
+          options: [
+            "Antalet neutroner i kärnan",
+            "Antalet protoner i atomkärnan",
+            "Antalet elektronskal",
+            "Atomens totala vikt i gram"
+          ],
+          correct: 1,
+          explanation: "Atomnumret anger exakt hur många protoner som finns i atomkärnan."
+        },
+        {
+          id: "E3",
+          level: "E",
+          type: "text",
+          question: "Förklara kortfattat vad som menas med en 'neutral atom'. Varför har den ingen elektrisk laddning?",
+          requiredSteps: [
+            "Steg 1: Nämna laddade partiklar (protoner och elektroner)",
+            "Steg 2: Förklara att antalet protoner (+) och elektroner (-) är lika stort",
+            "Steg 3: Dra slutsatsen att laddningarna tar ut varandra"
+          ],
+          keyTerms: ["protoner", "elektroner", "positiv", "negativ", "laddning", "lika många"]
         }
-    ]
-}`;
+      ],
 
-            try {
-                const response = await fetch(GROQ_ENDPOINT, {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${GROQ_API_KEY}`,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        model: GROQ_MODEL,
-                        messages: [
-                            { role: "system", content: "Du är en examinerande kemilärare i åk 8. Svara endast med JSON." },
-                            { role: "user", content: promptText }
-                        ],
-                        temperature: 0.2
-                    })
-                });
-
-                const data = await response.json();
-                const content = data.choices[0].message.content.trim();
-                const cleanJson = content.replace(/```json|```/g, '').trim();
-                const aiResult = JSON.parse(cleanJson);
-
-                processAndSaveResults(aiResult);
-
-            } catch (err) {
-                console.error("Groq AI API error, running local evaluator:", err);
-                const fallbackRes = fallbackLocalGrading();
-                processAndSaveResults(fallbackRes);
-            }
+      C: [
+        {
+          id: "C1",
+          level: "C",
+          type: "text",
+          question: "Grundämnena i Grupp 1 kallas alkalimetaller och Grupp 17 kallas halogener. Förklara varför grundämnen i samma grupp har liknande kemiska egenskaper.",
+          requiredSteps: [
+            "Steg 1: Identifiera att grundämnen i samma grupp har lika många valenselektroner",
+            "Steg 2: Förklara hur valenselektronerna styr hur atomen reagerar med andra ämnen",
+            "Steg 3: Dra slutsatsen att detta ger dem liknande reaktionsmönster och egenskaper"
+          ],
+          keyTerms: ["valenselektroner", "elektronskal", "reagerar", "kemiska egenskaper", "yttersta skalet"]
+        },
+        {
+          id: "C2",
+          level: "C",
+          type: "text",
+          question: "Beskriv hur en jonbindning bildas när natrium (Na) reagerar med klor (Cl) för att bilda koksalt (NaCl).",
+          requiredSteps: [
+            "Steg 1: Förklara att natrium vill lämna 1 valenselektron och klor vill ta emot 1 elektron för att nå ädelgasstruktur",
+            "Steg 2: Beskriv hur laddade joner bildas (Na+ blir positiv, Cl- blir negativ)",
+            "Steg 3: Förklara att olika laddningar attraherar varandra med elektriska krafter (jonbindning)"
+          ],
+          keyTerms: ["valenselektron", "ädelgasstruktur", "positiv jon", "negativ jon", "attraktionskraft", "jonbindning"]
         }
+      ],
 
-        function fallbackLocalGrading() {
-            let total = 0;
-            let max = 0;
-            const evaluations = [];
-
-            currentQuestions.forEach(q => {
-                const userVal = userAnswers[q.id];
-                const maxP = q.level === 'E' ? 1 : (q.level === 'C' ? 2 : 3);
-                let p = 0;
-                let fb = '';
-
-                if (q.type === 'mc') {
-                    if (userVal === q.correct) {
-                        p = maxP;
-                        fb = 'Korrekt svar!';
-                    } else {
-                        fb = `Rätt svar var: ${q.options[q.correct]}`;
-                    }
-                } else {
-                    const txt = (userVal || '').toLowerCase();
-                    const kws = q.rubricKeywords || [];
-                    let hits = 0;
-                    kws.forEach(k => { if (txt.includes(k.toLowerCase())) hits++; });
-
-                    if (hits >= Math.ceil(kws.length * 0.7)) p = maxP;
-                    else if (hits > 0) p = Math.max(1, maxP - 1);
-
-                    fb = p > 0 ? `Innehåller vissa begrepp.` : `Saknar centrala kemibegrepp.`;
-                }
-
-                total += p;
-                max += maxP;
-                evaluations.push({ questionId: q.id, score: p, maxScore: maxP, feedback: fb });
-            });
-
-            let g = 'F';
-            const r = total / max;
-            if (r >= 0.8) g = 'A';
-            else if (r >= 0.6) g = 'C';
-            else if (r >= 0.4) g = 'E';
-
-            if (activeExamType === 'E' && g !== 'F') g = 'E';
-            if (activeExamType === 'C' && ['A', 'B'].includes(g)) g = 'C';
-
-            return {
-                finalGrade: g,
-                totalScore: total,
-                maxPossibleScore: max,
-                conceptAnalysis: "Lokal utvärdering genomfördes för dina svar.",
-                nextStepAdvice: "Repetera begrepp som elektronskal och valenselektroner.",
-                evaluations
-            };
+      A: [
+        {
+          id: "A1",
+          level: "A",
+          type: "text",
+          question: "Jämför metallbindning och jonbindning på atomnivå. Förklara hur metallers strukturella uppbyggnad gör att de kan leda elektrisk ström och värme effektivt, medan fast koksalt inte kan leda ström.",
+          requiredSteps: [
+            "Steg 1 (Orsak): Beskriv metallbindning (positiva metalljoner i ett 'hav av fria elektroner') jämfört med jonbindning i ett fast kristallgitter.",
+            "Steg 2 (Process): Förklara hur de fria elektronerna i metallen kan röras fritt för att leda ström, medan jonerna i fast salt är fastlåsta i sina gitterplatser.",
+            "Steg 3 (Slutsats/Konsekvens): Koppla strukturerna till elektrisk och termisk ledningsförmåga och vad som krävs för att salt ska leda ström (smälta/lösas i vatten)."
+          ],
+          keyTerms: ["fria elektroner", "elektronhav", "metalljoner", "kristallgitter", "attraktionskraft", "rörliga laddningar", "ledningsförmåga"]
+        },
+        {
+          id: "A2",
+          level: "A",
+          type: "text",
+          question: "Resonera kring isotoper och radioaktivitet. Vad skiljer en stabil isotop från en radioaktiv isotop, vad innebär halveringstid, och hur kan radioaktivitet användas till både nytta (t.ex. kol-14 datering/sjukvård) och utgöra en risk för levande celler?",
+          requiredSteps: [
+            "Steg 1 (Orsak): Förklara vad en isotop är (samma antal protoner, olika antal neutroner) och varför en instabil kärna sönderfaller.",
+            "Steg 2 (Process): Förklara begreppet halveringstid och hur strålning kan skada biologiskt DNA/celler eller riktas mot cancerceller.",
+            "Steg 3 (Slutsats/Analys): Resonera i flera led kring nyttan med kol-14 datering och strålbehandling vägt mot riskerna för mutationer."
+          ],
+          keyTerms: ["neutroner", "instabil kärna", "sönderfall", "halveringstid", "kol-14", "strålning", "DNA-skador", "mutationer"]
         }
+      ]
+    };
 
-        function processAndSaveResults(aiResult) {
-            document.getElementById('quiz-loading-screen').classList.add('hidden');
-            document.getElementById('quiz-result-screen').classList.remove('hidden');
+    // --- INITIALIZATION ---
+    document.addEventListener("DOMContentLoaded", () => {
+      lucide.createIcons();
+      fetchUserIp();
+      checkIpBlockStatus();
+      setupAntiCheat();
+    });
 
-            let finalGrade = aiResult.finalGrade;
-            if (activeExamType === 'E' && finalGrade !== 'F') finalGrade = 'E';
-            if (activeExamType === 'C' && ['A', 'B'].includes(finalGrade)) finalGrade = 'C';
-
-            document.getElementById('result-score-val').innerText = `${aiResult.totalScore} / ${aiResult.maxPossibleScore}`;
-
-            const gradeElem = document.getElementById('result-grade-val');
-            gradeElem.innerText = finalGrade;
-
-            if (['A','B'].includes(finalGrade)) gradeElem.className = 'text-3xl font-black text-purple-400';
-            else if (['C','D'].includes(finalGrade)) gradeElem.className = 'text-3xl font-black text-blue-400';
-            else if (finalGrade === 'E') gradeElem.className = 'text-3xl font-black text-emerald-400';
-            else gradeElem.className = 'text-3xl font-black text-red-500';
-
-            document.getElementById('result-summary-text').innerText = 
-                `Provtyp: ${activeExamType === 'ALL' ? 'Blandat' : activeExamType + '-Prov'} • Maxbetyg: ${activeExamType === 'E' ? 'E' : (activeExamType === 'C' ? 'C' : 'A')}.`;
-
-            document.getElementById('concept-analysis-box').innerText = aiResult.conceptAnalysis || 'Ingen analys tillgänglig.';
-            document.getElementById('next-step-box').innerHTML = `<i class="fa-solid fa-lightbulb mr-1"></i> <strong>Nästa Betygssteg:</strong> ${aiResult.nextStepAdvice || 'Öva vidare.'}`;
-
-            const feedbackList = document.getElementById('result-feedback-list');
-            feedbackList.innerHTML = '';
-
-            currentQuestions.forEach((q, idx) => {
-                const evalData = aiResult.evaluations.find(e => e.questionId === q.id) || { score: 0, maxScore: 1, feedback: 'Ej analyserad' };
-                const userVal = userAnswers[q.id];
-                const displayUserAns = q.type === 'mc' ? (userVal !== undefined ? q.options[userVal] : 'Ej besvarad') : (userVal || 'Ej besvarad');
-
-                const card = document.createElement('div');
-                card.className = "p-4 rounded-xl bg-darkbg border border-darkcardborder space-y-2 text-xs";
-
-                card.innerHTML = `
-                    <div class="flex items-center justify-between">
-                        <span class="font-bold text-gray-400">Fråga ${idx + 1} (${q.level}-Nivå)</span>
-                        <span class="font-mono font-bold ${evalData.score > 0 ? 'text-emerald-400' : 'text-red-400'}">
-                            ${evalData.score} / ${evalData.maxScore} p
-                        </span>
-                    </div>
-                    <h4 class="font-bold text-white text-sm">${q.title}</h4>
-                    <div class="bg-darkcard p-3 rounded-lg border border-darkcardborder/60 space-y-2">
-                        <p><strong class="text-gray-400">Ditt Svar:</strong> ${displayUserAns}</p>
-                        <p class="text-amber-500"><i class="fa-solid fa-brain mr-1"></i> <strong>Groq AI Feedback:</strong> ${evalData.feedback}</p>
-                        ${q.modelAnswer ? `<p class="text-gray-400 pt-1 border-t border-darkcardborder"><strong class="text-emerald-400">Mönstersvar:</strong> ${q.modelAnswer}</p>` : ''}
-                    </div>
-                `;
-
-                feedbackList.appendChild(card);
-            });
-
-            saveExamToDatabase({
-                id: Date.now(),
-                date: new Date().toLocaleString('sv-SE'),
-                userIP: currentClientIP,
-                examType: activeExamType,
-                grade: finalGrade,
-                score: `${aiResult.totalScore} / ${aiResult.maxPossibleScore}`,
-                conceptAnalysis: aiResult.conceptAnalysis
-            });
+    // --- NAVIGATION LOGIC ---
+    function switchTab(tabId) {
+      const tabs = ['prov', 'ptable', 'dash', 'teacher'];
+      tabs.forEach(t => {
+        const view = document.getElementById(`view-${t}`);
+        const navBtn = document.getElementById(`nav-${t}`);
+        if (t === tabId) {
+          view.classList.remove('hidden');
+          navBtn.className = "px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2 text-yellow-400 bg-zinc-800/80 border border-yellow-500/30";
+        } else {
+          view.classList.add('hidden');
+          navBtn.className = "px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2 text-zinc-400 hover:text-white hover:bg-zinc-800";
         }
+      });
+      lucide.createIcons();
+    }
 
-        function saveExamToDatabase(record) {
-            let history = JSON.parse(localStorage.getItem('kemi_prov_history') || '[]');
-            history.unshift(record);
-            localStorage.setItem('kemi_prov_history', JSON.stringify(history));
+    // --- IP & BLOCKING SYSTEM ---
+    async function fetchUserIp() {
+      try {
+        const res = await fetch('https://api.ipify.org?format=json');
+        const data = await res.json();
+        currentUserIp = data.ip || "127.0.0.1";
+      } catch (e) {
+        currentUserIp = "127.0.0.1";
+      }
+      document.getElementById('headerUserIp').innerText = currentUserIp;
+      checkIpBlockStatus();
+    }
+
+    function getBlockedIps() {
+      return JSON.parse(localStorage.getItem('blockedIps') || '[]');
+    }
+
+    function checkIpBlockStatus() {
+      const blocked = getBlockedIps();
+      if (blocked.includes(currentUserIp)) {
+        document.getElementById('blockedOverlay').classList.remove('hidden');
+        document.getElementById('blockedIpDisplay').innerText = currentUserIp;
+      }
+    }
+
+    // --- ANTI-CHEATING MONITORING ---
+    function setupAntiCheat() {
+      window.addEventListener('blur', () => {
+        if (currentExam) {
+          cheatWarnings++;
+          updateCheatStatus();
         }
+      });
+    }
 
-        function renderHistory() {
-            const listElem = document.getElementById('history-list');
-            let history = JSON.parse(localStorage.getItem('kemi_prov_history') || '[]');
+    function updateCheatStatus() {
+      const statusEl = document.getElementById('cheatStatusDisplay');
+      if (cheatWarnings === 0) {
+        statusEl.className = "text-emerald-400 font-bold";
+        statusEl.innerText = "Aktivt (0 varningar)";
+      } else {
+        statusEl.className = "text-red-400 font-bold animate-pulse";
+        statusEl.innerText = `VARNING (${cheatWarnings} flikbyten)`;
+      }
+    }
 
-            if (history.length === 0) {
-                listElem.innerHTML = `<div class="p-8 text-center text-xs text-gray-500 bg-darkbg rounded-xl border border-darkcardborder">Inga inlämnade prov sparade i databasen.</div>`;
-                return;
-            }
+    // --- EXAM ENGINE ---
+    function startExam(levelKey) {
+      let questions = [];
+      let levelTitle = "";
 
-            listElem.innerHTML = '';
-            history.forEach(item => {
-                const itemElem = document.createElement('div');
-                itemElem.className = "p-4 rounded-xl bg-darkbg border border-darkcardborder flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 text-xs";
+      if (levelKey === 'E') {
+        questions = [...QUESTION_BANK.E];
+        levelTitle = "E-Prov (Grundnivå)";
+      } else if (levelKey === 'C') {
+        questions = [...QUESTION_BANK.C, QUESTION_BANK.E[2]];
+        levelTitle = "C-Prov (Fördjupad)";
+      } else if (levelKey === 'A') {
+        questions = [...QUESTION_BANK.A];
+        levelTitle = "A-Prov (Resonemang - Endast Skriv)";
+      } else {
+        questions = [...QUESTION_BANK.E, ...QUESTION_BANK.C, ...QUESTION_BANK.A];
+        levelTitle = "Blandat Nationellt Prov";
+      }
 
-                itemElem.innerHTML = `
-                    <div class="space-y-1">
-                        <div class="flex items-center gap-2">
-                            <span class="font-bold text-white">${item.examType === 'ALL' ? 'Blandat Prov' : item.examType + '-Prov'}</span>
-                            <span class="text-gray-500">• ${item.date}</span>
-                        </div>
-                        <p class="text-gray-400 line-clamp-1">${item.conceptAnalysis}</p>
-                    </div>
-                    <div class="flex items-center gap-3">
-                        <span class="font-mono text-amber-500 font-bold">${item.score}</span>
-                        <span class="px-3 py-1 rounded-lg font-black text-sm ${
-                            ['A','B'].includes(item.grade) ? 'bg-purple-500/20 text-purple-400 border border-purple-500/30' :
-                            ['C','D'].includes(item.grade) ? 'bg-blue-500/20 text-blue-400 border border-blue-500/30' :
-                            item.grade === 'E' ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' :
-                            'bg-red-500/20 text-red-500 border border-red-500/30'
-                        }">
-                            ${item.grade}
-                        </span>
-                    </div>
-                `;
+      currentExam = {
+        levelKey,
+        levelTitle,
+        questions,
+        startTime: new Date()
+      };
 
-                listElem.appendChild(itemElem);
-            });
-        }
+      cheatWarnings = 0;
+      examSeconds = 0;
+      clearInterval(examTimerInterval);
+      examTimerInterval = setInterval(() => {
+        examSeconds++;
+        const mins = String(Math.floor(examSeconds / 60)).padStart(2, '0');
+        const secs = String(examSeconds % 60).padStart(2, '0');
+        document.getElementById('timerDisplay').innerText = `${mins}:${secs}`;
+      }, 1000);
 
-        function clearHistory() {
-            if (confirm("Vill du verkligen rensa historiken?")) {
-                localStorage.removeItem('kemi_prov_history');
-                renderHistory();
-            }
-        }
+      document.getElementById('provSelectionArea').classList.add('hidden');
+      document.getElementById('activeExamArea').classList.remove('hidden');
+      document.getElementById('examTitleDisplay').innerText = levelTitle;
 
-        function resetQuiz() {
-            document.getElementById('quiz-result-screen').classList.add('hidden');
-            document.getElementById('quiz-select-screen').classList.remove('hidden');
-        }
+      renderExamQuestions();
+      updateCheatStatus();
+    }
 
+    function renderExamQuestions() {
+      const container = document.getElementById('questionsContainer');
+      container.innerHTML = "";
 
-        /* -------------------------------------------------------------
-           8. ADMIN PANEL & IP MANAGEMENT LOGIC
-        ------------------------------------------------------------- */
-        function loginAdmin() {
-            const input = document.getElementById('admin-password-input').value;
-            const err = document.getElementById('admin-login-error');
+      currentExam.questions.forEach((q, idx) => {
+        const qCard = document.createElement('div');
+        qCard.className = "bg-zinc-900 border border-zinc-800 p-6 rounded-xl space-y-4";
 
-            if (input === ADMIN_PASS) {
-                isAdminLoggedIn = true;
-                err.classList.add('hidden');
-                renderAdminDashboard();
-            } else {
-                err.innerText = "Felaktigt administratörslösenord!";
-                err.classList.remove('hidden');
-            }
-        }
+        let levelBadgeClass = "bg-emerald-500/10 text-emerald-400 border-emerald-500/20";
+        if (q.level === 'C') levelBadgeClass = "bg-blue-500/10 text-blue-400 border-blue-500/20";
+        if (q.level === 'A') levelBadgeClass = "bg-amber-500/10 text-amber-400 border-amber-500/20";
 
-        function logoutAdmin() {
-            isAdminLoggedIn = false;
-            document.getElementById('admin-login-screen').classList.remove('hidden');
-            document.getElementById('admin-dashboard').classList.add('hidden');
-            document.getElementById('admin-password-input').value = '';
-        }
+        let innerContent = `
+          <div class="flex items-center justify-between border-b border-zinc-800 pb-3">
+            <span class="text-xs font-mono font-bold px-2.5 py-1 rounded border ${levelBadgeClass}">
+              FRÅGA ${idx + 1} (${q.level}-NIVÅ)
+            </span>
+            <span class="text-xs text-zinc-500 font-mono">${q.type === 'mcq' ? 'Flerval' : 'Skriftligt Resonemang'}</span>
+          </div>
+          <h3 class="text-base font-bold text-white">${q.question}</h3>
+        `;
 
-        function renderAdminDashboard() {
-            document.getElementById('admin-login-screen').classList.add('hidden');
-            document.getElementById('admin-dashboard').classList.remove('hidden');
-
-            renderBlockedIPsList();
-            renderVisitorLogTable();
-        }
-
-        function renderBlockedIPsList() {
-            const blockedIPs = JSON.parse(localStorage.getItem('blocked_ips') || '[]');
-            const container = document.getElementById('blocked-ips-list');
-            document.getElementById('blocked-count').innerText = blockedIPs.length;
-
-            if (blockedIPs.length === 0) {
-                container.innerHTML = `<span class="text-xs text-gray-500 italic">Inga blockerade IP-adresser.</span>`;
-                return;
-            }
-
-            container.innerHTML = '';
-            blockedIPs.forEach(ip => {
-                const tag = document.createElement('div');
-                tag.className = "inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-red-500/10 border border-red-500/30 text-xs font-mono text-red-400";
-                tag.innerHTML = `
-                    <span>${ip}</span>
-                    <button onclick="unblockIP('${ip}')" class="hover:text-white"><i class="fa-solid fa-xmark"></i></button>
-                `;
-                container.appendChild(tag);
-            });
+        if (q.type === 'mcq') {
+          innerContent += `<div class="space-y-2 mt-3">`;
+          q.options.forEach((opt, oIdx) => {
+            innerContent += `
+              <label class="flex items-center gap-3 p-3 bg-black/40 border border-zinc-800 rounded-lg cursor-pointer hover:border-yellow-500/40 transition">
+                <input type="radio" name="q_${q.id}" value="${oIdx}" class="accent-yellow-500">
+                <span class="text-sm text-zinc-300">${opt}</span>
+              </label>
+            `;
+          });
+          innerContent += `</div>`;
+        } else {
+          innerContent += `
+            <div class="space-y-3 mt-3">
+              <div class="bg-black/50 p-3 rounded border border-zinc-800/80 text-xs text-zinc-400 space-y-1">
+                <strong class="text-yellow-400">Krav på svarstruktur för högre poäng:</strong>
+                ${q.requiredSteps.map(step => `<div>• ${step}</div>`).join('')}
+              </div>
+              <textarea id="input_${q.id}" rows="5" placeholder="Skriv ditt svar här... Använd kemiska begrepp och förklara orsak och verkan i steg." class="w-full bg-black border border-zinc-800 rounded-xl p-4 text-sm text-white focus:border-yellow-500 outline-none custom-scrollbar font-sans"></textarea>
+            </div>
+          `;
         }
 
-        function renderVisitorLogTable() {
-            const logs = JSON.parse(localStorage.getItem('visitor_logs') || '[]');
-            const blockedIPs = JSON.parse(localStorage.getItem('blocked_ips') || '[]');
-            const tbody = document.getElementById('visitor-log-tbody');
+        qCard.innerHTML = innerContent;
+        container.appendChild(qCard);
+      });
 
-            tbody.innerHTML = '';
-            if (logs.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-gray-500">Inga besök registrerade.</td></tr>`;
-                return;
-            }
+      lucide.createIcons();
+    }
 
-            logs.forEach(log => {
-                const isBlocked = blockedIPs.includes(log.ip);
-                const tr = document.createElement('tr');
-                tr.className = "hover:bg-darkbg/50";
+    function cancelExam() {
+      if (confirm("Är du säker på att du vill avbryta provet? Dina svar sparas inte.")) {
+        clearInterval(examTimerInterval);
+        currentExam = null;
+        document.getElementById('activeExamArea').classList.add('hidden');
+        document.getElementById('provSelectionArea').classList.remove('hidden');
+      }
+    }
 
-                tr.innerHTML = `
-                    <td class="p-3 font-mono font-bold text-amber-500">${log.ip} ${log.ip === currentClientIP ? '<span class="text-[10px] text-emerald-400">(Du)</span>' : ''}</td>
-                    <td class="p-3 text-gray-400">${log.time}</td>
-                    <td class="p-3 text-white">${log.activity}</td>
-                    <td class="p-3">
-                        <span class="px-2 py-0.5 rounded text-[10px] font-bold ${isBlocked ? 'bg-red-500/20 text-red-400 border border-red-500/30' : 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'}">
-                            ${isBlocked ? 'BLOCKERAD' : 'AKTIV'}
-                        </span>
-                    </td>
-                    <td class="p-3 text-right">
-                        ${
-                            isBlocked 
-                            ? `<button onclick="unblockIP('${log.ip}')" class="px-2.5 py-1 rounded bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500 hover:text-black font-bold">Lås upp</button>`
-                            : `<button onclick="blockIP('${log.ip}')" class="px-2.5 py-1 rounded bg-red-500/20 text-red-400 hover:bg-red-500 hover:text-white font-bold">Blockera</button>`
-                        }
-                    </td>
-                `;
+    // --- GROQ AI EVALUATION ENGINE ---
+    async function submitExamForGrading() {
+      if (!currentExam) return;
 
-                tbody.appendChild(tr);
-            });
+      // Collect user answers
+      const answers = [];
+      let missingCount = 0;
+
+      currentExam.questions.forEach(q => {
+        if (q.type === 'mcq') {
+          const selected = document.querySelector(`input[name="q_${q.id}"]:checked`);
+          answers.push({
+            id: q.id,
+            type: 'mcq',
+            question: q.question,
+            level: q.level,
+            userAnswer: selected ? parseInt(selected.value) : null,
+            correctAnswer: q.correct
+          });
+        } else {
+          const textVal = document.getElementById(`input_${q.id}`).value.trim();
+          if (!textVal) missingCount++;
+          answers.push({
+            id: q.id,
+            type: 'text',
+            question: q.question,
+            level: q.level,
+            userAnswer: textVal,
+            requiredSteps: q.requiredSteps,
+            keyTerms: q.keyTerms
+          });
         }
+      });
 
-        function blockIP(ip) {
-            let blockedIPs = JSON.parse(localStorage.getItem('blocked_ips') || '[]');
-            if (!blockedIPs.includes(ip)) {
-                blockedIPs.push(ip);
-                localStorage.setItem('blocked_ips', JSON.stringify(blockedIPs));
-            }
-            renderAdminDashboard();
-            checkIfIPBlocked();
+      if (missingCount > 0) {
+        if (!confirm("Du har obesvarade skrivfrågor. Vill du ändå lämna in?")) return;
+      }
+
+      clearInterval(examTimerInterval);
+
+      // Show Loading UI
+      document.getElementById('activeExamArea').classList.add('hidden');
+      document.getElementById('gradingLoadingArea').classList.remove('hidden');
+
+      // AI System Evaluation Prompt
+      const systemPrompt = `
+Du är en sträng och erfaren kemilärare i den svenska grundskolan som rättar nationella prov för årskurs 8 utifrån Skolverkets Lgr22-kriterier.
+
+DITT UPPDRAG:
+Granska elevens svar och ge en objektiv, pedagogisk och noggrann rättning.
+
+REGLER FÖR BETYGSSÄTTNING & STRUKTUR:
+1. Elevens svar MÅSTE följa logisk ordning (Steg 1: Orsak/Definition -> Steg 2: Process/Förklaring -> Steg 3: Slutsats/Konsekvens).
+2. Om eleven har rätt fakta men saknar struktur eller hoppar över steg, ge poängavdrag och förklara exakt varför.
+3. Kontrollera användningen av kemiska begrepp (valenselektroner, elektronskal, ädelgasstruktur, joner, attraktionskraft etc.).
+4. Ett E-prov kan ALDRIG ge högre än E i slutbetyg. Ett C-prov kan max ge C.
+
+A-PROV OCH A-SVAR KRÄVER:
+- Flerstegsresonemang i minst 3 sammanhängande led.
+- Exakta naturvetenskapliga begrepp.
+- Citat från elevens egen text som bevis för vad som var bra/bristfälligt.
+
+Returnera ENBART ett giltigt JSON-objekt med följande format utan markdown eller extra text:
+{
+  "finalGrade": "E" | "C" | "A" | "F",
+  "totalPoints": number,
+  "maxPoints": number,
+  "conceptsAnalysis": [
+    {"term": "string", "used": boolean, "comment": "string"}
+  ],
+  "structureAnalysis": [
+    {"questionId": "string", "followedOrder": boolean, "deduction": number, "explanation": "string"}
+  ],
+  "questionResults": [
+    {
+      "questionId": "string",
+      "score": number,
+      "maxScore": number,
+      "feedback": "string",
+      "quoteEvidence": "string",
+      "modelAnswer": "string"
+    }
+  ]
+}
+      `;
+
+      const userPayload = {
+        examLevel: currentExam.levelKey,
+        cheatWarnings: cheatWarnings,
+        answers: answers
+      };
+
+      let gradingResult = null;
+
+      try {
+        const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+          method: "POST",
+          headers: {
+            "Authorization": `Bearer ${GROQ_API_KEY}`,
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            model: "llama-3.3-70b-versatile",
+            messages: [
+              { role: "system", content: systemPrompt },
+              { role: "user", content: `RÄTTA PROVEN MED BETYG 8ANS ANVÄNDERNS SVAR OCH FRÅGOR VILKET PROV ETC: ${JSON.stringify(userPayload)}` }
+            ],
+            temperature: 0.2,
+            response_format: { type: "json_object" }
+          })
+        });
+
+        const data = await response.json();
+        gradingResult = JSON.parse(data.choices[0].message.content);
+      } catch (err) {
+        console.error("Groq AI API error, executing fallback grading:", err);
+        gradingResult = fallbackGradingLogic(answers, currentExam.levelKey);
+      }
+
+      // Cap Grade based on test level selection rules
+      if (currentExam.levelKey === 'E' && gradingResult.finalGrade !== 'F') gradingResult.finalGrade = 'E';
+      if (currentExam.levelKey === 'C' && ['A'].includes(gradingResult.finalGrade)) gradingResult.finalGrade = 'C';
+
+      // Save submission record to localStorage
+      saveExamSubmission(gradingResult);
+
+      // Display Dashboard
+      document.getElementById('gradingLoadingArea').classList.add('hidden');
+      renderDashboardResult(gradingResult);
+      switchTab('dash');
+    }
+
+    // --- FALLBACK LOCAL EVALUATION LOGIC ---
+    function fallbackGradingLogic(answers, levelKey) {
+      let totalPts = 0;
+      let maxPts = 0;
+      const qResults = [];
+      const concepts = [];
+      const struct = [];
+
+      answers.forEach(a => {
+        if (a.type === 'mcq') {
+          maxPts += 2;
+          const isCorrect = a.userAnswer === a.correctAnswer;
+          if (isCorrect) totalPts += 2;
+          qResults.push({
+            questionId: a.id,
+            score: isCorrect ? 2 : 0,
+            maxScore: 2,
+            feedback: isCorrect ? "Korrekt svar på flervalsfråga." : "Felaktigt svarVal.",
+            quoteEvidence: isCorrect ? "Korrekt alternativ valt." : "Fel alternativ valt.",
+            modelAnswer: "Se facit för rätt alternativ."
+          });
+        } else {
+          maxPts += 5;
+          const text = a.userAnswer || "";
+          let score = 0;
+          let foundTerms = 0;
+
+          a.keyTerms.forEach(kt => {
+            const has = text.toLowerCase().includes(kt.toLowerCase());
+            if (has) foundTerms++;
+            concepts.push({ term: kt, used: has, comment: has ? "Rätt använd" : "Saknades i texten" });
+          });
+
+          if (text.length > 30) score += 2;
+          if (foundTerms >= 2) score += 2;
+          if (text.length > 100 && foundTerms >= 3) score += 1;
+
+          totalPts += score;
+          struct.push({
+            questionId: a.id,
+            followedOrder: score >= 4,
+            deduction: 5 - score,
+            explanation: score < 4 ? "Resonemanget saknar tydlig orsak-verkan kedja eller kemiska begrepp." : "Bra struktur på svaret."
+          });
+
+          qResults.push({
+            questionId: a.id,
+            score: score,
+            maxScore: 5,
+            feedback: `Du fick ${score}/5 poäng. Använde ${foundTerms} av ${a.keyTerms.length} nyckelbegrepp.`,
+            quoteEvidence: text.length > 0 ? `"${text.substring(0, 60)}..."` : "Inget svar angivet.",
+            modelAnswer: "Ett komplett svar ska beskriva orsak, kemisk process och slutsats i 3 tydliga steg."
+          });
         }
+      });
 
-        function blockManualIP() {
-            const input = document.getElementById('manual-block-ip');
-            const ip = input.value.trim();
-            if (ip) {
-                blockIP(ip);
-                input.value = '';
-            }
+      const pct = maxPts > 0 ? (totalPts / maxPts) : 0;
+      let grade = "F";
+      if (pct >= 0.85) grade = "A";
+      else if (pct >= 0.65) grade = "C";
+      else if (pct >= 0.45) grade = "E";
+
+      return {
+        finalGrade: grade,
+        totalPoints: totalPts,
+        maxPoints: maxPts,
+        conceptsAnalysis: concepts.slice(0, 5),
+        structureAnalysis: struct,
+        questionResults: qResults
+      };
+    }
+
+    // --- SAVE SUBMISSION TO LOCAL DATABASE ---
+    function saveExamSubmission(result) {
+      const history = JSON.parse(localStorage.getItem('examHistory') || '[]');
+      const newEntry = {
+        timestamp: new Date().toLocaleString('sv-SE'),
+        title: currentExam.levelTitle,
+        level: currentExam.levelKey,
+        score: `${result.totalPoints} / ${result.maxPoints}`,
+        grade: result.finalGrade,
+        cheatWarnings: cheatWarnings,
+        ip: currentUserIp,
+        details: result
+      };
+      history.unshift(newEntry);
+      localStorage.setItem('examHistory', JSON.stringify(history));
+      updateTeacherDashboard();
+    }
+
+    // --- RENDER STUDENT DASHBOARD RESULT ---
+    function renderDashboardResult(res) {
+      document.getElementById('dashExamTitle').innerText = currentExam ? currentExam.levelTitle : "Nationellt Prov";
+      document.getElementById('dashExamSub').innerText = `Genomfört: ${new Date().toLocaleString('sv-SE')} | IP: ${currentUserIp}`;
+      document.getElementById('dashGradeBadge').innerText = res.finalGrade;
+      document.getElementById('dashScoreBadge').innerText = `${res.totalPoints} / ${res.maxPoints}`;
+      
+      document.getElementById('dashGradeBox').classList.remove('hidden');
+      document.getElementById('dashContentArea').classList.remove('hidden');
+
+      // Concepts List
+      const conceptsList = document.getElementById('conceptsList');
+      conceptsList.innerHTML = "";
+      if (res.conceptsAnalysis && res.conceptsAnalysis.length > 0) {
+        res.conceptsAnalysis.forEach(c => {
+          conceptsList.innerHTML += `
+            <div class="flex items-center justify-between bg-black/40 p-2 rounded border border-zinc-800">
+              <span class="font-mono ${c.used ? 'text-emerald-400' : 'text-zinc-500'}">${c.term}</span>
+              <span class="text-[10px] px-2 py-0.5 rounded ${c.used ? 'bg-emerald-500/10 text-emerald-400' : 'bg-red-500/10 text-red-400'}">
+                ${c.used ? 'Använt' : 'Saknas'}
+              </span>
+            </div>
+          `;
+        });
+      } else {
+        conceptsList.innerHTML = `<div class="text-zinc-500">Inga begrepp analyserades.</div>`;
+      }
+
+      // Structure Feedback List
+      const structList = document.getElementById('structureFeedbackList');
+      structList.innerHTML = "";
+      if (res.structureAnalysis && res.structureAnalysis.length > 0) {
+        res.structureAnalysis.forEach(s => {
+          structList.innerHTML += `
+            <div class="bg-black/40 p-2.5 rounded border border-zinc-800 space-y-1">
+              <div class="flex justify-between items-center">
+                <span class="font-bold text-white">Fråga ${s.questionId}</span>
+                <span class="font-mono text-xs ${s.followedOrder ? 'text-emerald-400' : 'text-amber-400'}">
+                  ${s.followedOrder ? 'Perfekt Struktur' : `Poängavdrag (-${s.deduction}p)`}
+                </span>
+              </div>
+              <p class="text-zinc-400 text-[11px]">${s.explanation}</p>
+            </div>
+          `;
+        });
+      }
+
+      // Question Breakdown
+      const qReview = document.getElementById('dashQuestionsReview');
+      qReview.innerHTML = "";
+      res.questionResults.forEach((qr, idx) => {
+        qReview.innerHTML += `
+          <div class="bg-black/50 border border-zinc-800 p-4 rounded-xl space-y-2">
+            <div class="flex items-center justify-between text-xs border-b border-zinc-800/80 pb-2">
+              <span class="font-bold text-yellow-400">Fråga ${qr.questionId}</span>
+              <span class="font-mono text-zinc-300">Poäng: ${qr.score} / ${qr.maxScore}</span>
+            </div>
+            <p class="text-sm text-zinc-200">${qr.feedback}</p>
+            ${qr.quoteEvidence ? `<div class="text-xs text-zinc-400 italic bg-zinc-900/80 p-2 rounded border border-zinc-800">Citat från ditt svar: "${qr.quoteEvidence}"</div>` : ''}
+            <div class="text-xs text-emerald-400/90 bg-emerald-950/20 p-2 rounded border border-emerald-900/30">
+              <strong>Modellsvar (Lgr22 A-nivå):</strong> ${qr.modelAnswer}
+            </div>
+          </div>
+        `;
+      });
+
+      lucide.createIcons();
+    }
+
+    // --- UPDATE TEACHER DASHBOARD ---
+    function updateTeacherDashboard() {
+      const history = JSON.parse(localStorage.getItem('examHistory') || '[]');
+      document.getElementById('teacherTotalExams').innerText = history.length;
+
+      if (history.length === 0) return;
+
+      let sumPct = 0;
+      let structWarns = 0;
+      const gradeCounts = {};
+
+      const tbody = document.getElementById('teacherTableBody');
+      tbody.innerHTML = "";
+
+      history.forEach(item => {
+        const scoreParts = item.score.split('/');
+        const pts = parseFloat(scoreParts[0]);
+        const max = parseFloat(scoreParts[1]);
+        if (max > 0) sumPct += (pts / max);
+
+        gradeCounts[item.grade] = (gradeCounts[item.grade] || 0) + 1;
+        if (item.cheatWarnings > 0) structWarns++;
+
+        tbody.innerHTML += `
+          <tr class="hover:bg-zinc-800/40">
+            <td class="p-3 font-mono">${item.timestamp}</td>
+            <td class="p-3 font-bold text-white">${item.title}</td>
+            <td class="p-3 font-mono text-yellow-400">${item.score}</td>
+            <td class="p-3 font-mono font-bold text-emerald-400">${item.grade}</td>
+            <td class="p-3 font-mono ${item.cheatWarnings > 0 ? 'text-red-400 font-bold' : 'text-zinc-500'}">${item.cheatWarnings} varningar</td>
+            <td class="p-3 font-mono text-zinc-400">${item.ip}</td>
+          </tr>
+        `;
+      });
+
+      const avgPct = Math.round((sumPct / history.length) * 100);
+      document.getElementById('teacherAvgScore').innerText = `${avgPct}%`;
+      document.getElementById('teacherStructureWarns').innerText = structWarns;
+
+      let topGrade = "-";
+      let maxGCount = 0;
+      for (const g in gradeCounts) {
+        if (gradeCounts[g] > maxGCount) {
+          maxGCount = gradeCounts[g];
+          topGrade = g;
         }
+      }
+      document.getElementById('teacherMostCommonGrade').innerText = topGrade;
+    }
 
-        function unblockIP(ip) {
-            let blockedIPs = JSON.parse(localStorage.getItem('blocked_ips') || '[]');
-            blockedIPs = blockedIPs.filter(b => b !== ip);
-            localStorage.setItem('blocked_ips', JSON.stringify(blockedIPs));
-            renderAdminDashboard();
-            checkIfIPBlocked();
-        }
+    function clearClassHistory() {
+      if (confirm("Rensa all sparad provhistorik för klassen?")) {
+        localStorage.removeItem('examHistory');
+        updateTeacherDashboard();
+      }
+    }
 
-        function clearVisitorLogs() {
-            localStorage.removeItem('visitor_logs');
-            renderVisitorLogTable();
-        }
+    // --- PTABLE IFRAME RELOAD ---
+    function reloadPtable() {
+      const iframe = document.getElementById('ptableIframe');
+      iframe.src = iframe.src;
+    }
 
+    // --- ADMIN MODAL CONTROLS ---
+    function openAdminModal() {
+      document.getElementById('adminModal').classList.remove('hidden');
+    }
 
-        /* -------------------------------------------------------------
-           9. INITIALIZATION ON WINDOW LOAD
-        ------------------------------------------------------------- */
-        window.onload = function() {
-            initClientIP();
-            renderFallbackTable();
-        };
-    </script>
+    function closeAdminModal() {
+      document.getElementById('adminModal').classList.add('hidden');
+    }
+
+    function authenticateAdmin() {
+      const pass = document.getElementById('adminPasswordInput').value;
+      if (pass === ADMIN_PASS) {
+        document.getElementById('adminAuthSection').classList.add('hidden');
+        document.getElementById('adminControlsSection').classList.remove('hidden');
+        document.getElementById('adminAuthError').classList.add('hidden');
+        renderBlockedIpsList();
+      } else {
+        document.getElementById('adminAuthError').classList.remove('hidden');
+      }
+    }
+
+    function blockManualIp() {
+      const ip = document.getElementById('manualIpInput').value.trim();
+      if (!ip) return;
+      const blocked = getBlockedIps();
+      if (!blocked.includes(ip)) {
+        blocked.push(ip);
+        localStorage.setItem('blockedIps', JSON.stringify(blocked));
+        document.getElementById('manualIpInput').value = "";
+        renderBlockedIpsList();
+        checkIpBlockStatus();
+      }
+    }
+
+    function unblockIp(ip) {
+      let blocked = getBlockedIps();
+      blocked = blocked.filter(i => i !== ip);
+      localStorage.setItem('blockedIps', JSON.stringify(blocked));
+      renderBlockedIpsList();
+      if (ip === currentUserIp) {
+        document.getElementById('blockedOverlay').classList.add('hidden');
+      }
+    }
+
+    function renderBlockedIpsList() {
+      const list = document.getElementById('blockedIpsList');
+      const blocked = getBlockedIps();
+      list.innerHTML = "";
+
+      if (blocked.length === 0) {
+        list.innerHTML = `<div class="text-xs text-zinc-500">Inga IP-adresser spärrade.</div>`;
+        return;
+      }
+
+      blocked.forEach(ip => {
+        list.innerHTML += `
+          <div class="flex items-center justify-between bg-black/60 p-2.5 rounded border border-zinc-800">
+            <span class="text-xs font-mono text-red-400 font-bold">${ip}</span>
+            <button onclick="unblockIp('${ip}')" class="px-2.5 py-1 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-[11px] rounded transition">
+              Lås Upp
+            </button>
+          </div>
+        `;
+      });
+    }
+  </script>
 </body>
 </html>
