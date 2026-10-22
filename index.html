@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>KemiQuiz Pro - Nationellt Bedömningssystem (Lgr22)</title>
+  <title>KemiQuiz Pro - Periodiska Systemet & Sönderfall (Lgr22)</title>
   <!-- Tailwind CSS & Lucide Icons -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
@@ -17,9 +17,6 @@
     .font-mono { font-family: 'JetBrains Mono', monospace; }
     .gold-glow {
       box-shadow: 0 0 20px rgba(234, 179, 8, 0.2);
-    }
-    .gold-glow-lg {
-      box-shadow: 0 0 35px rgba(234, 179, 8, 0.35);
     }
     .custom-scrollbar::-webkit-scrollbar {
       width: 6px;
@@ -64,25 +61,22 @@
           </div>
           <div>
             <span class="text-lg font-bold tracking-tight text-white flex items-center gap-2">
-              KemiQuiz <span class="text-xs font-mono px-2 py-0.5 rounded bg-yellow-500/10 text-yellow-400 border border-yellow-500/30">Skolverket Lgr22</span>
+              KemiQuiz <span class="text-xs font-mono px-2 py-0.5 rounded bg-yellow-500/10 text-yellow-400 border border-yellow-500/30">Lgr22</span>
             </span>
-            <p class="text-xs text-zinc-400">Nationellt Bedömningssystem Åk 8</p>
+            <p class="text-xs text-zinc-400">Periodiska Systemet & Radioaktivitet Åk 8</p>
           </div>
         </div>
 
-        <!-- Navigation Tabs -->
+        <!-- Navigation Tabs (Teacher tab removed) -->
         <nav class="hidden md:flex space-x-1">
           <button id="nav-prov" onclick="switchTab('prov')" class="px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2 text-yellow-400 bg-zinc-800/80 border border-yellow-500/30">
-            <i data-lucide="file-text" class="w-4 h-4"></i> Prov & Test
+            <i data-lucide="file-text" class="w-4 h-4"></i> Blandat Nationellt Prov
           </button>
           <button id="nav-ptable" onclick="switchTab('ptable')" class="px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2 text-zinc-400 hover:text-white hover:bg-zinc-800">
-            <i data-lucide="grid" class="w-4 h-4"></i> Periodiska Systemet
+            <i data-lucide="grid" class="w-4 h-4"></i> Periodiska Systemet (Ptable)
           </button>
           <button id="nav-dash" onclick="switchTab('dash')" class="px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2 text-zinc-400 hover:text-white hover:bg-zinc-800">
             <i data-lucide="bar-chart-3" class="w-4 h-4"></i> Resultat & Analys
-          </button>
-          <button id="nav-teacher" onclick="switchTab('teacher')" class="px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2 text-zinc-400 hover:text-white hover:bg-zinc-800">
-            <i data-lucide="users" class="w-4 h-4"></i> Lärardashboard
           </button>
         </nav>
 
@@ -107,99 +101,18 @@
     <!-- VIEW 1: PROV / EXAM SELECTION & TEST ENGINE -->
     <section id="view-prov" class="space-y-6">
 
-      <!-- LEVEL SELECTION CARDS (If no test running) -->
+      <!-- INTRO CARD -->
       <div id="provSelectionArea" class="space-y-6">
         <div class="bg-gradient-to-r from-zinc-900 via-zinc-900 to-black p-6 rounded-2xl border border-zinc-800 shadow-xl">
           <h2 class="text-2xl font-bold text-white mb-2 flex items-center gap-2">
-            <i data-lucide="award" class="text-yellow-400"></i> Välj Provnivå - Kemi Årskurs 8
+            <i data-lucide="award" class="text-yellow-400"></i> Nationellt Prov: Periodiska Systemet, Bindningar & Strålning
           </h2>
-          <p class="text-zinc-400 text-sm max-w-3xl">
-            Provsystemet analyserar dina svar med AI utifrån Skolverkets Lgr22-kriterier. För högre betyg krävs rätt struktur (Orsak &rarr; Process &rarr; Slutsats) och korrekta kemiska begrepp.
+          <p class="text-zinc-400 text-sm max-w-3xl mb-4">
+            Detta prov innehåller totalt 11 frågor baserade på dina provanteckningar: <strong>6 flervalsfrågor (kryss)</strong> på E-nivå samt <strong>5 skrivfrågor</strong> med E-, C- och A-nivå som kräver djupare resonemang (Orsak &rarr; Process &rarr; Slutsats).
           </p>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          
-          <!-- E-NIVÅ CARD -->
-          <div class="bg-zinc-900/90 border border-zinc-800 hover:border-emerald-500/50 rounded-xl p-5 flex flex-col justify-between transition group hover:shadow-lg hover:shadow-emerald-950/20">
-            <div>
-              <div class="flex items-center justify-between mb-3">
-                <span class="text-xs font-bold font-mono bg-emerald-500/10 text-emerald-400 px-2.5 py-1 rounded border border-emerald-500/20">E-NIVÅ</span>
-                <i data-lucide="check-circle" class="w-5 h-5 text-emerald-400"></i>
-              </div>
-              <h3 class="text-lg font-bold text-white mb-2 group-hover:text-emerald-400 transition">E-Prov (Grund)</h3>
-              <p class="text-xs text-zinc-400 mb-4">Blandning av flervalsfrågor och korta skrivfrågor. Täcker grundläggande kemiska fakta och atomens uppbyggnad.</p>
-              <div class="text-xs text-zinc-500 space-y-1 mb-4 font-mono">
-                <div>• Maxbetyg: <strong class="text-emerald-400">E</strong></div>
-                <div>• Frågetyp: Kryss + Skriv</div>
-                <div>• Tid: Ca 15 min</div>
-              </div>
-            </div>
-            <button onclick="startExam('E')" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-black font-bold text-xs rounded-lg transition shadow">
-              Starta E-Prov
-            </button>
-          </div>
-
-          <!-- C-NIVÅ CARD -->
-          <div class="bg-zinc-900/90 border border-zinc-800 hover:border-blue-500/50 rounded-xl p-5 flex flex-col justify-between transition group hover:shadow-lg hover:shadow-blue-950/20">
-            <div>
-              <div class="flex items-center justify-between mb-3">
-                <span class="text-xs font-bold font-mono bg-blue-500/10 text-blue-400 px-2.5 py-1 rounded border border-blue-500/20">C-NIVÅ</span>
-                <i data-lucide="trending-up" class="w-5 h-5 text-blue-400"></i>
-              </div>
-              <h3 class="text-lg font-bold text-white mb-2 group-hover:text-blue-400 transition">C-Prov (Fördjupad)</h3>
-              <p class="text-xs text-zinc-400 mb-4">Flest skrivfrågor. Kräver att du förklarar samband, valenselektroner och kemiska bindningar med korrekt vokabulär.</p>
-              <div class="text-xs text-zinc-500 space-y-1 mb-4 font-mono">
-                <div>• Maxbetyg: <strong class="text-blue-400">C</strong></div>
-                <div>• Frågetyp: Dominerat av Skriv</div>
-                <div>• Tid: Ca 25 min</div>
-              </div>
-            </div>
-            <button onclick="startExam('C')" class="w-full py-2.5 bg-blue-600 hover:bg-blue-500 text-black font-bold text-xs rounded-lg transition shadow">
-              Starta C-Prov
-            </button>
-          </div>
-
-          <!-- A-NIVÅ CARD -->
-          <div class="bg-zinc-900/90 border border-zinc-800 hover:border-amber-500/50 rounded-xl p-5 flex flex-col justify-between transition group hover:shadow-lg hover:shadow-amber-950/20">
-            <div>
-              <div class="flex items-center justify-between mb-3">
-                <span class="text-xs font-bold font-mono bg-amber-500/10 text-amber-400 px-2.5 py-1 rounded border border-amber-500/20">A-NIVÅ</span>
-                <i data-lucide="zap" class="w-5 h-5 text-amber-400"></i>
-              </div>
-              <h3 class="text-lg font-bold text-white mb-2 group-hover:text-amber-400 transition">A-Prov (Resonemang)</h3>
-              <p class="text-xs text-zinc-400 mb-4"><strong>100% Skrivfrågor.</strong> Kräver flerstegsresonemang (Orsak &rarr; Process &rarr; Slutsats), analys av bindningar och radioaktivitet.</p>
-              <div class="text-xs text-zinc-500 space-y-1 mb-4 font-mono">
-                <div>• Betyg: <strong class="text-amber-400">Upp till A</strong></div>
-                <div>• Frågetyp: Endast Essä/Skriv</div>
-                <div>• Tid: Ca 35 min</div>
-              </div>
-            </div>
-            <button onclick="startExam('A')" class="w-full py-2.5 bg-amber-500 hover:bg-yellow-400 text-black font-bold text-xs rounded-lg transition shadow">
-              Starta A-Prov
-            </button>
-          </div>
-
-          <!-- BLANDAT PROV CARD -->
-          <div class="bg-zinc-900/90 border border-zinc-800 hover:border-purple-500/50 rounded-xl p-5 flex flex-col justify-between transition group hover:shadow-lg hover:shadow-purple-950/20">
-            <div>
-              <div class="flex items-center justify-between mb-3">
-                <span class="text-xs font-bold font-mono bg-purple-500/10 text-purple-400 px-2.5 py-1 rounded border border-purple-500/20">FULLSTÄNDIGT</span>
-                <i data-lucide="layers" class="w-5 h-5 text-purple-400"></i>
-              </div>
-              <h3 class="text-lg font-bold text-white mb-2 group-hover:text-purple-400 transition">Blandat Nationellt Prov</h3>
-              <p class="text-xs text-zinc-400 mb-4">Omfattar frågor från alla nivåer (E, C och A). Ger en komplett kartläggning av din faktiska kunskapsnivå.</p>
-              <div class="text-xs text-zinc-500 space-y-1 mb-4 font-mono">
-                <div>• Betyg: <strong class="text-purple-400">E – A</strong></div>
-                <div>• Frågetyp: Kryss + Skriv</div>
-                <div>• Tid: Ca 40 min</div>
-              </div>
-            </div>
-            <button onclick="startExam('MIXED')" class="w-full py-2.5 bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs rounded-lg transition shadow">
-              Starta Blandat Prov
-            </button>
-          </div>
-
+          <button onclick="startUnifiedExam()" class="px-8 py-3 bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 text-black font-extrabold text-sm rounded-xl transition shadow-lg gold-glow flex items-center gap-2">
+            <i data-lucide="play-circle" class="w-4 h-4"></i> Starta Det Blandade Provoet Nu
+          </button>
         </div>
       </div>
 
@@ -209,10 +122,10 @@
         <!-- Exam Top Bar -->
         <div class="bg-zinc-900 border border-zinc-800 p-4 rounded-xl flex flex-wrap items-center justify-between gap-4">
           <div class="flex items-center gap-3">
-            <span id="activeExamBadge" class="px-3 py-1 bg-yellow-500/10 text-yellow-400 border border-yellow-500/30 text-xs font-bold font-mono rounded-lg">
-              PROV ONGOING
+            <span class="px-3 py-1 bg-yellow-500/10 text-yellow-400 border border-yellow-500/30 text-xs font-bold font-mono rounded-lg">
+              BLANDAT PROV (E, C, A)
             </span>
-            <span id="examTitleDisplay" class="text-lg font-bold text-white">Prov i Periodiska Systemet</span>
+            <span class="text-lg font-bold text-white">Periodiska systemet & Radioaktivitet</span>
           </div>
 
           <div class="flex items-center gap-6 text-xs font-mono">
@@ -239,9 +152,9 @@
         <div class="bg-zinc-900/80 border border-zinc-800 p-6 rounded-xl flex flex-col sm:flex-row items-center justify-between gap-4">
           <div>
             <h4 class="text-sm font-bold text-white">Redo att lämna in?</h4>
-            <p class="text-xs text-zinc-400">Dina svar behandlas av AI med Skolverkets rättningsmatriser. Kontrollera din struktur innan inlämning.</p>
+            <p class="text-xs text-zinc-400">Dina svar granskas av Groq AI utifrån Lgr22-matrisen och dina provanteckningar.</p>
           </div>
-          <button id="submitExamBtn" onclick="submitExamForGrading()" class="px-8 py-3 bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 text-black font-extrabold text-sm rounded-xl transition shadow-lg gold-glow flex items-center gap-2">
+          <button onclick="submitExamForGrading()" class="px-8 py-3 bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 text-black font-extrabold text-sm rounded-xl transition shadow-lg gold-glow flex items-center gap-2">
             <i data-lucide="send" class="w-4 h-4"></i> Lämna In Prov För Rättning
           </button>
         </div>
@@ -254,7 +167,7 @@
         <div>
           <h3 class="text-xl font-bold text-white mb-2">AI-Rättning Pågår...</h3>
           <p class="text-sm text-zinc-400 max-w-md mx-auto">
-            Groq AI analyserar dina skriftliga resonemang, sökord, argumentationsordning (Orsak &rarr; Process &rarr; Slutsats) samt kemiska begrepp.
+            Groq AI analyserar dina skriftliga svar mot provanteckningarna, kontrollerar struktur (Orsak &rarr; Process &rarr; Slutsats) och bedömer betyg (E, C, A).
           </p>
         </div>
       </div>
@@ -268,7 +181,7 @@
           <h2 class="text-lg font-bold text-white flex items-center gap-2">
             <i data-lucide="grid" class="text-yellow-400"></i> Periodiska Systemet (Ptable Extension View)
           </h2>
-          <p class="text-xs text-zinc-400">Interaktiv vy kopplad direkt till officiella Ptable.com på svenska.</p>
+          <p class="text-xs text-zinc-400">Interaktiv officiell vy på svenska från ptable.com.</p>
         </div>
         <div class="flex items-center gap-2">
           <a href="https://ptable.com/?lang=sv" target="_blank" rel="noopener noreferrer" class="px-3 py-1.5 bg-zinc-800 hover:bg-zinc-700 text-xs text-yellow-400 rounded-lg border border-yellow-500/20 flex items-center gap-1.5">
@@ -294,7 +207,7 @@
         <div>
           <span class="text-xs font-mono font-bold text-yellow-400 bg-yellow-500/10 px-2.5 py-1 rounded border border-yellow-500/20">SENASTE RÄTTNING</span>
           <h2 class="text-2xl font-bold text-white mt-2" id="dashExamTitle">Ingen provhistorik ännu</h2>
-          <p class="text-xs text-zinc-400 mt-1" id="dashExamSub">Genomför ett prov för att se din detaljerade Skolverket-analys.</p>
+          <p class="text-xs text-zinc-400 mt-1" id="dashExamSub">Genomför provet för att se din detaljerade analys.</p>
         </div>
 
         <!-- Grade Display Box -->
@@ -313,18 +226,13 @@
       <!-- ANALYTICS CARDS GRID -->
       <div id="dashContentArea" class="hidden space-y-6">
         
-        <!-- Begreppsanalys & Strukturanalys -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          
           <!-- Begrepp -->
           <div class="bg-zinc-900 border border-zinc-800 p-5 rounded-xl space-y-3">
             <h3 class="text-sm font-bold text-white flex items-center gap-2">
               <i data-lucide="book-open" class="text-emerald-400 w-4 h-4"></i> Begreppsanalys (Naturvetenskapliga Ord)
             </h3>
-            <p class="text-xs text-zinc-400">Granskning av hur väl du använt ämnesspecifika begrepp i dina skriftliga svar:</p>
-            <div id="conceptsList" class="space-y-2 text-xs">
-              <!-- Dynamically populated -->
-            </div>
+            <div id="conceptsList" class="space-y-2 text-xs"></div>
           </div>
 
           <!-- Struktur & Logik -->
@@ -332,85 +240,20 @@
             <h3 class="text-sm font-bold text-white flex items-center gap-2">
               <i data-lucide="list-checks" class="text-amber-400 w-4 h-4"></i> Resonemang- & Strukturanalys
             </h3>
-            <p class="text-xs text-zinc-400">Analys av orsak-verkan kedjor (Steg 1: Orsak &rarr; Steg 2: Process &rarr; Steg 3: Slutsats):</p>
-            <div id="structureFeedbackList" class="space-y-2 text-xs">
-              <!-- Dynamically populated -->
-            </div>
+            <div id="structureFeedbackList" class="space-y-2 text-xs"></div>
           </div>
-
         </div>
 
-        <!-- Detailed Question Grading Breakdown -->
+        <!-- Detailed Question Breakdown -->
         <div class="bg-zinc-900 border border-zinc-800 p-6 rounded-xl space-y-4">
           <h3 class="text-lg font-bold text-white flex items-center gap-2">
             <i data-lucide="file-check-2" class="text-yellow-400"></i> Detaljerad Genomgång Per Fråga
           </h3>
-          <div id="dashQuestionsReview" class="space-y-4">
-            <!-- Dynamically populated -->
-          </div>
+          <div id="dashQuestionsReview" class="space-y-4"></div>
         </div>
 
       </div>
 
-    </section>
-
-    <!-- VIEW 4: TEACHER & CLASS DASHBOARD -->
-    <section id="view-teacher" class="hidden space-y-6">
-      <div class="bg-zinc-900 border border-zinc-800 p-6 rounded-2xl flex items-center justify-between">
-        <div>
-          <h2 class="text-2xl font-bold text-white flex items-center gap-2">
-            <i data-lucide="users" class="text-yellow-400"></i> Lärardashboard & Klassöversikt
-          </h2>
-          <p class="text-xs text-zinc-400 mt-1">Översikt över elevernas prestationer, vanliga missuppfattningar och fuskrisker.</p>
-        </div>
-        <button onclick="clearClassHistory()" class="px-3 py-1.5 bg-red-500/10 text-red-400 border border-red-500/30 rounded-lg text-xs hover:bg-red-500/20">
-          Rensa Klasshistorik
-        </button>
-      </div>
-
-      <!-- STATS SUMMARY -->
-      <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
-        <div class="bg-zinc-900 border border-zinc-800 p-4 rounded-xl">
-          <div class="text-xs text-zinc-500 font-mono">ANTAL INLÄMNADE PROV</div>
-          <div id="teacherTotalExams" class="text-2xl font-bold text-white mt-1">0</div>
-        </div>
-        <div class="bg-zinc-900 border border-zinc-800 p-4 rounded-xl">
-          <div class="text-xs text-zinc-500 font-mono">MEDELPOÄNG</div>
-          <div id="teacherAvgScore" class="text-2xl font-bold text-yellow-400 mt-1">0%</div>
-        </div>
-        <div class="bg-zinc-900 border border-zinc-800 p-4 rounded-xl">
-          <div class="text-xs text-zinc-500 font-mono">VANLIGASTE BETYG</div>
-          <div id="teacherMostCommonGrade" class="text-2xl font-bold text-emerald-400 font-mono mt-1">-</div>
-        </div>
-        <div class="bg-zinc-900 border border-zinc-800 p-4 rounded-xl">
-          <div class="text-xs text-zinc-500 font-mono">FLERTALS STRUKTURMISTAG</div>
-          <div id="teacherStructureWarns" class="text-2xl font-bold text-red-400 mt-1">0</div>
-        </div>
-      </div>
-
-      <!-- EXAM SUBMISSIONS LOG -->
-      <div class="bg-zinc-900 border border-zinc-800 p-6 rounded-xl space-y-4">
-        <h3 class="text-lg font-bold text-white">Inlämnade Elevprov</h3>
-        <div class="overflow-x-auto">
-          <table class="w-full text-left text-xs border-collapse">
-            <thead>
-              <tr class="border-b border-zinc-800 text-zinc-400 font-mono">
-                <th class="p-3">Tid</th>
-                <th class="p-3">Provtyp</th>
-                <th class="p-3">Poäng</th>
-                <th class="p-3">Betyg</th>
-                <th class="p-3">Fusk-Risk</th>
-                <th class="p-3">Klient IP</th>
-              </tr>
-            </thead>
-            <tbody id="teacherTableBody" class="divide-y divide-zinc-800/50 text-zinc-300">
-              <tr>
-                <td colspan="6" class="p-4 text-center text-zinc-500">Inga prov inlämnade ännu.</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
     </section>
 
   </main>
@@ -430,7 +273,7 @@
 
       <!-- Password Auth State -->
       <div id="adminAuthSection" class="space-y-4">
-        <p class="text-xs text-zinc-400">Ange administratörslösenord för att hantera blockerade IP-adresser och systeminställningar.</p>
+        <p class="text-xs text-zinc-400">Ange administratörslösenord för att hantera blockerade IP-adresser.</p>
         <div class="space-y-2">
           <input type="password" id="adminPasswordInput" placeholder="Ange lösenord..." class="w-full bg-black border border-zinc-800 rounded-lg p-3 text-sm text-white focus:border-yellow-500 outline-none">
           <p id="adminAuthError" class="text-xs text-red-400 hidden">Felaktigt lösenord.</p>
@@ -440,10 +283,8 @@
         </button>
       </div>
 
-      <!-- Admin Panel Controls (Hidden until unlocked) -->
+      <!-- Admin Panel Controls -->
       <div id="adminControlsSection" class="hidden space-y-6">
-        
-        <!-- Manual IP Block Box -->
         <div class="bg-black/50 p-4 rounded-xl border border-zinc-800 space-y-3">
           <h4 class="text-sm font-bold text-white">Blockera Ny IP-Adress</h4>
           <div class="flex gap-2">
@@ -453,15 +294,10 @@
             </button>
           </div>
         </div>
-
-        <!-- Blocked IPs List -->
         <div class="space-y-3">
           <h4 class="text-sm font-bold text-white">Aktiva IP-Spärrar</h4>
-          <div id="blockedIpsList" class="space-y-2 max-h-48 overflow-y-auto custom-scrollbar">
-            <!-- Dynamically populated -->
-          </div>
+          <div id="blockedIpsList" class="space-y-2 max-h-48 overflow-y-auto custom-scrollbar"></div>
         </div>
-
       </div>
 
     </div>
@@ -469,12 +305,11 @@
 
   <!-- FOOTER -->
   <footer class="bg-[#121318] border-t border-zinc-800 py-4 text-center text-xs text-zinc-500">
-    KemiQuiz Pro &copy; 2026 - Anpassat för Skolverkets Läroplan (Lgr22 Åk 8). Drevs med Groq AI.
+    KemiQuiz Pro &copy; 2026 - Baserat på provanteckningar (Lgr22 Åk 8). Drevs med Groq AI.
   </footer>
 
-  <!-- APPLICATION SCRIPT LOGIC -->
+  <!-- SCRIPT LOGIC -->
   <script>
-    // --- GLOBAL CONFIGURATION & CONSTANTS ---
     const GROQ_API_KEY = "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";
     const ADMIN_PASS = 'DNOWFI"¤%RU(=EQfew23¨öló312';
     
@@ -484,107 +319,157 @@
     let examSeconds = 0;
     let cheatWarnings = 0;
 
-    // --- QUESTION BANK (SWEDISH YEAR 8 CHEMISTRY) ---
-    const QUESTION_BANK = {
-      E: [
-        {
-          id: "E1",
-          level: "E",
-          type: "mcq",
-          question: "Vilka tre partiklar bygger upp en atom?",
-          options: [
-            "Protoner, neutroner och elektroner",
-            "Molekyler, joner och kristaller",
-            "Atomer, grundämnen och föreningar",
-            "Kvarkar, fotoner och graviter"
-          ],
-          correct: 0,
-          explanation: "En atom består av en kärna med positivt laddade protoner och oladdade neutroner, samt negativt laddade elektroner i elektronskal runt kärnan."
-        },
-        {
-          id: "E2",
-          level: "E",
-          type: "mcq",
-          question: "Vad anger ett grundämnes atomnummer i det periodiska systemet?",
-          options: [
-            "Antalet neutroner i kärnan",
-            "Antalet protoner i atomkärnan",
-            "Antalet elektronskal",
-            "Atomens totala vikt i gram"
-          ],
-          correct: 1,
-          explanation: "Atomnumret anger exakt hur många protoner som finns i atomkärnan."
-        },
-        {
-          id: "E3",
-          level: "E",
-          type: "text",
-          question: "Förklara kortfattat vad som menas med en 'neutral atom'. Varför har den ingen elektrisk laddning?",
-          requiredSteps: [
-            "Steg 1: Nämna laddade partiklar (protoner och elektroner)",
-            "Steg 2: Förklara att antalet protoner (+) och elektroner (-) är lika stort",
-            "Steg 3: Dra slutsatsen att laddningarna tar ut varandra"
-          ],
-          keyTerms: ["protoner", "elektroner", "positiv", "negativ", "laddning", "lika många"]
-        }
-      ],
+    // --- EXACT UNIFIED QUESTION BANK (6 Kryssfrågor + 5 Skrivfrågor) ---
+    const UNIFIED_QUESTIONS = [
+      // KRYSSFRÅGOR (6 st - E-nivå baserat på anteckningar)
+      {
+        id: "K1",
+        level: "E",
+        type: "mcq",
+        question: "Vilka tre partiklar bygger upp en atom enligt anteckningarna?",
+        options: [
+          "Protoner, neutroner och elektroner",
+          "Molekyler, joner och kristaller",
+          "Grundämnen, isotoper och fotoner",
+          "Valenselektroner, kärnor och salter"
+        ],
+        correct: 0,
+        explanation: "Enligt avsnitt 1 består en atom av en kärna med positiva protoner och neutrala neutroner, samt elektroner runt kärnan."
+      },
+      {
+        id: "K2",
+        level: "E",
+        type: "mcq",
+        question: "Vad anger ett grundämnes atomnummer?",
+        options: [
+          "Antalet elektronskal",
+          "Antalet protoner i atomkärnan",
+          "Antalet neutroner i kärnan",
+          "Mängden valenselektroner"
+        ],
+        correct: 1,
+        explanation: "Atomnumret avgör vilket grundämne atomen tillhör och anger antalet protoner."
+      },
+      {
+        id: "K3",
+        level: "E",
+        type: "mcq",
+        question: "Vad har ämnen i samma grupp (lodrät kolumn) i det periodiska systemet gemensamt?",
+        options: [
+          "Samma antal elektronskal",
+          "Samma antal neutroner",
+          "Samma antal valenselektroner",
+          "Samma atomnummer"
+        ],
+        correct: 2,
+        explanation: "Grupper (18 lodräta kolumner) innebär att ämnena har lika många valenselektroner och därmed liknande kemiska egenskaper."
+      },
+      {
+        id: "K4",
+        level: "E",
+        type: "mcq",
+        question: "Vilken egenskap har ämnena i Grupp 18 (ädelgaserna)?",
+        options: [
+          "De reagerar mycket kraftigt med vatten",
+          "De har fullt yttersta elektronskal och är mycket stabila",
+          "De saknar protoner i kärnan",
+          "De bildar alltid negativa joner"
+        ],
+        correct: 1,
+        explanation: "Ädelgaserna har redan fullt yttersta skal (ädelgasstruktur) vilket gör dem mycket stabila och oreaktiva."
+      },
+      {
+        id: "K5",
+        level: "E",
+        type: "mcq",
+        question: "Vad kännetecknar alkalimetallerna (Grupp 1)?",
+        options: [
+          "De har 7 valenselektroner och är mycket giftiga",
+          "De har 1 valenselektron som de lätt lämnar ifrån sig och reagerar kraftigt med vatten",
+          "De är stabila gaser som används vid svetsning",
+          "De saknar helt elektroner"
+        ],
+        correct: 1,
+        explanation: "Alkalimetaller har 1 valenselektron, är mjuka metaller och reagerar häftigt med vatten så vätgas bildas."
+      },
+      {
+        id: "K6",
+        level: "E",
+        type: "mcq",
+        question: "Vad innebär begreppet 'halveringstid' när det gäller radioaktiva isotoper?",
+        options: [
+          "Den tid det tar för atomen att förlora hälften av sina protoner",
+          "Den tid det tar för hälften av de radioaktiva atomerna i ett material att sönderfalla",
+          "Den tid det tar för strålningen att helt försvinna från jorden",
+          "Den tid det tar för kol-14 att bildas i levande träd"
+        ],
+        correct: 1,
+        explanation: "Halveringstid är den tid det tar för hälften av de radioaktiva atomkärnorna i ett material att sönderfalla."
+      },
 
-      C: [
-        {
-          id: "C1",
-          level: "C",
-          type: "text",
-          question: "Grundämnena i Grupp 1 kallas alkalimetaller och Grupp 17 kallas halogener. Förklara varför grundämnen i samma grupp har liknande kemiska egenskaper.",
-          requiredSteps: [
-            "Steg 1: Identifiera att grundämnen i samma grupp har lika många valenselektroner",
-            "Steg 2: Förklara hur valenselektronerna styr hur atomen reagerar med andra ämnen",
-            "Steg 3: Dra slutsatsen att detta ger dem liknande reaktionsmönster och egenskaper"
-          ],
-          keyTerms: ["valenselektroner", "elektronskal", "reagerar", "kemiska egenskaper", "yttersta skalet"]
-        },
-        {
-          id: "C2",
-          level: "C",
-          type: "text",
-          question: "Beskriv hur en jonbindning bildas när natrium (Na) reagerar med klor (Cl) för att bilda koksalt (NaCl).",
-          requiredSteps: [
-            "Steg 1: Förklara att natrium vill lämna 1 valenselektron och klor vill ta emot 1 elektron för att nå ädelgasstruktur",
-            "Steg 2: Beskriv hur laddade joner bildas (Na+ blir positiv, Cl- blir negativ)",
-            "Steg 3: Förklara att olika laddningar attraherar varandra med elektriska krafter (jonbindning)"
-          ],
-          keyTerms: ["valenselektron", "ädelgasstruktur", "positiv jon", "negativ jon", "attraktionskraft", "jonbindning"]
-        }
-      ],
+      // SKRIVFRÅGOR (5 st - C & A nivå med krav på struktur & nyckelord)
+      {
+        id: "S1",
+        level: "C",
+        type: "text",
+        question: "Förklara varför grundämnen i samma grupp i det periodiska systemet har liknande kemiska egenskaper, samt hur halogenernas (Grupp 17) valenselektroner gör att de reagerar lätt med andra ämnen.",
+        requiredSteps: [
+          "Steg 1: Förklara att samma grupp innebär lika många valenselektroner.",
+          "Steg 2: Beskriv halogenernas 7 valenselektroner och att de behöver ta upp 1 elektron.",
+          "Steg 3: Dra slutsatsen att detta gör dem reaktiva och att de bildar negativa joner."
+        ],
+        keyTerms: ["valenselektroner", "grupp", "kemiska egenskaper", "halogener", "negativa joner", "ädelgasstruktur"]
+      },
+      {
+        id: "S2",
+        level: "C",
+        type: "text",
+        question: "Beskriv hur en jonbindning bildas mellan natrium och klor för att bilda koksalt (NaCl), och förklara varför en saltlösning kan leda elektrisk ström.",
+        requiredSteps: [
+          "Steg 1: Beskriv elektronöverföringen (natrium ger bort 1 elektron, klor tar emot).",
+          "Steg 2: Förklara bildandet av positiva och negativa joner samt den elektriska attraktionskraften (jonbindning).",
+          "Steg 3: Förklara att jonerna separeras i vatten och blir fria rörliga laddningar som leder ström."
+        ],
+        keyTerms: ["elektron", "positiv jon", "negativ jon", "jonbindning", "koksalt", "fria joner", "leda ström"]
+      },
+      {
+        id: "S3",
+        level: "C",
+        type: "text",
+        question: "Förklara skillnaden på mikronivå mellan en molekylbindning (elektronparbindning) och en jonbindning. Ge exempel på hur socker respektive salt beter sig när de löses i vatten.",
+        requiredSteps: [
+          "Steg 1: Förklara att molekylbindning innebär att atomer delar elektronpar (t.ex. H2).",
+          "Steg 2: Förklara att jonbindning bygger på fullständig elektronöverföring och laddade joner i ett kristallgitter.",
+          "Steg 3: Jämför vattnets inverkan: socker sprids som hela molekyler medan salt delas upp i fria joner."
+        ],
+        keyTerms: ["elektronparbindning", "dela elektroner", "jonförening", "kristallgitter", "socker", "vatten"]
+      },
+      {
+        id: "S4",
+        level: "A",
+        type: "text",
+        question: "Resonera utförligt kring metallbindningens uppbyggnad med ett 'hav av fria elektroner'. Förklara hur denna modell i flera led förklarar varför metaller leder både elektricitet och värme så effektivt.",
+        requiredSteps: [
+          "Steg 1 (Orsak): Beskriv att metallatomer lämnar sina valenselektroner till ett gemensamt elektronhav kring positiva metalljoner.",
+          "Steg 2 (Process): Förklara att de fria elektronerna kan röra sig fritt genom hela metallstrukturen när spänning eller värme tillförs.",
+          "Steg 3 (Slutsats): Koppla rörligheten direkt till varför metaller är utmärkta ledare av elektrisk ström och värme."
+        ],
+        keyTerms: ["metallbindning", "fria elektroner", "elektronhav", "positiva metalljoner", "elektrisk ström", "värme", "ledare"]
+      },
+      {
+        id: "S5",
+        level: "A",
+        type: "text",
+        question: "Analyserar radioaktivitet utifrån dina anteckningar: Vad gör en atomkärna instabil, vilka risker medför strålning för levande organismer (DNA/celler), hur kan den samtidigt vara till nytta inom sjukvård, och hur fungerar kol-14 datering?",
+        requiredSteps: [
+          "Steg 1 (Orsak): Förklara obalans mellan protoner och neutroner som leder till instabila isotoper och radioaktivt sönderfall.",
+          "Steg 2 (Process): Beskriv hur strålningen skadar cell-DNA (risk för mutationer/cancer) men även kan döda cancerceller i sjukvården.",
+          "Steg 3 (Slutsats/Analys): Förklara halveringstid och hur kol-14 datering används för att åldersbestämma gamla organiska föremål."
+        ],
+        keyTerms: ["instabil isotop", "sönderfall", "strålning", "DNA-skador", "cancer", "halveringstid", "kol-14-datering"]
+      }
+    ];
 
-      A: [
-        {
-          id: "A1",
-          level: "A",
-          type: "text",
-          question: "Jämför metallbindning och jonbindning på atomnivå. Förklara hur metallers strukturella uppbyggnad gör att de kan leda elektrisk ström och värme effektivt, medan fast koksalt inte kan leda ström.",
-          requiredSteps: [
-            "Steg 1 (Orsak): Beskriv metallbindning (positiva metalljoner i ett 'hav av fria elektroner') jämfört med jonbindning i ett fast kristallgitter.",
-            "Steg 2 (Process): Förklara hur de fria elektronerna i metallen kan röras fritt för att leda ström, medan jonerna i fast salt är fastlåsta i sina gitterplatser.",
-            "Steg 3 (Slutsats/Konsekvens): Koppla strukturerna till elektrisk och termisk ledningsförmåga och vad som krävs för att salt ska leda ström (smälta/lösas i vatten)."
-          ],
-          keyTerms: ["fria elektroner", "elektronhav", "metalljoner", "kristallgitter", "attraktionskraft", "rörliga laddningar", "ledningsförmåga"]
-        },
-        {
-          id: "A2",
-          level: "A",
-          type: "text",
-          question: "Resonera kring isotoper och radioaktivitet. Vad skiljer en stabil isotop från en radioaktiv isotop, vad innebär halveringstid, och hur kan radioaktivitet användas till både nytta (t.ex. kol-14 datering/sjukvård) och utgöra en risk för levande celler?",
-          requiredSteps: [
-            "Steg 1 (Orsak): Förklara vad en isotop är (samma antal protoner, olika antal neutroner) och varför en instabil kärna sönderfaller.",
-            "Steg 2 (Process): Förklara begreppet halveringstid och hur strålning kan skada biologiskt DNA/celler eller riktas mot cancerceller.",
-            "Steg 3 (Slutsats/Analys): Resonera i flera led kring nyttan med kol-14 datering och strålbehandling vägt mot riskerna för mutationer."
-          ],
-          keyTerms: ["neutroner", "instabil kärna", "sönderfall", "halveringstid", "kol-14", "strålning", "DNA-skador", "mutationer"]
-        }
-      ]
-    };
-
-    // --- INITIALIZATION ---
     document.addEventListener("DOMContentLoaded", () => {
       lucide.createIcons();
       fetchUserIp();
@@ -592,9 +477,8 @@
       setupAntiCheat();
     });
 
-    // --- NAVIGATION LOGIC ---
     function switchTab(tabId) {
-      const tabs = ['prov', 'ptable', 'dash', 'teacher'];
+      const tabs = ['prov', 'ptable', 'dash'];
       tabs.forEach(t => {
         const view = document.getElementById(`view-${t}`);
         const navBtn = document.getElementById(`nav-${t}`);
@@ -609,7 +493,6 @@
       lucide.createIcons();
     }
 
-    // --- IP & BLOCKING SYSTEM ---
     async function fetchUserIp() {
       try {
         const res = await fetch('https://api.ipify.org?format=json');
@@ -634,7 +517,6 @@
       }
     }
 
-    // --- ANTI-CHEATING MONITORING ---
     function setupAntiCheat() {
       window.addEventListener('blur', () => {
         if (currentExam) {
@@ -655,29 +537,10 @@
       }
     }
 
-    // --- EXAM ENGINE ---
-    function startExam(levelKey) {
-      let questions = [];
-      let levelTitle = "";
-
-      if (levelKey === 'E') {
-        questions = [...QUESTION_BANK.E];
-        levelTitle = "E-Prov (Grundnivå)";
-      } else if (levelKey === 'C') {
-        questions = [...QUESTION_BANK.C, QUESTION_BANK.E[2]];
-        levelTitle = "C-Prov (Fördjupad)";
-      } else if (levelKey === 'A') {
-        questions = [...QUESTION_BANK.A];
-        levelTitle = "A-Prov (Resonemang - Endast Skriv)";
-      } else {
-        questions = [...QUESTION_BANK.E, ...QUESTION_BANK.C, ...QUESTION_BANK.A];
-        levelTitle = "Blandat Nationellt Prov";
-      }
-
+    function startUnifiedExam() {
       currentExam = {
-        levelKey,
-        levelTitle,
-        questions,
+        title: "Blandat Nationellt Prov (Periodiska Systemet & Strålning)",
+        questions: UNIFIED_QUESTIONS,
         startTime: new Date()
       };
 
@@ -693,7 +556,6 @@
 
       document.getElementById('provSelectionArea').classList.add('hidden');
       document.getElementById('activeExamArea').classList.remove('hidden');
-      document.getElementById('examTitleDisplay').innerText = levelTitle;
 
       renderExamQuestions();
       updateCheatStatus();
@@ -716,7 +578,7 @@
             <span class="text-xs font-mono font-bold px-2.5 py-1 rounded border ${levelBadgeClass}">
               FRÅGA ${idx + 1} (${q.level}-NIVÅ)
             </span>
-            <span class="text-xs text-zinc-500 font-mono">${q.type === 'mcq' ? 'Flerval' : 'Skriftligt Resonemang'}</span>
+            <span class="text-xs text-zinc-500 font-mono">${q.type === 'mcq' ? 'Flerval (Kryss)' : 'Skriftligt Resonemang'}</span>
           </div>
           <h3 class="text-base font-bold text-white">${q.question}</h3>
         `;
@@ -736,10 +598,10 @@
           innerContent += `
             <div class="space-y-3 mt-3">
               <div class="bg-black/50 p-3 rounded border border-zinc-800/80 text-xs text-zinc-400 space-y-1">
-                <strong class="text-yellow-400">Krav på svarstruktur för högre poäng:</strong>
+                <strong class="text-yellow-400">Krav på svarstruktur (Orsak &rarr; Process &rarr; Slutsats):</strong>
                 ${q.requiredSteps.map(step => `<div>• ${step}</div>`).join('')}
               </div>
-              <textarea id="input_${q.id}" rows="5" placeholder="Skriv ditt svar här... Använd kemiska begrepp och förklara orsak och verkan i steg." class="w-full bg-black border border-zinc-800 rounded-xl p-4 text-sm text-white focus:border-yellow-500 outline-none custom-scrollbar font-sans"></textarea>
+              <textarea id="input_${q.id}" rows="5" placeholder="Skriv ditt svar här... Använd kemiska begrepp och förklara i flera led." class="w-full bg-black border border-zinc-800 rounded-xl p-4 text-sm text-white focus:border-yellow-500 outline-none custom-scrollbar font-sans"></textarea>
             </div>
           `;
         }
@@ -760,11 +622,9 @@
       }
     }
 
-    // --- GROQ AI EVALUATION ENGINE ---
     async function submitExamForGrading() {
       if (!currentExam) return;
 
-      // Collect user answers
       const answers = [];
       let missingCount = 0;
 
@@ -800,27 +660,20 @@
 
       clearInterval(examTimerInterval);
 
-      // Show Loading UI
       document.getElementById('activeExamArea').classList.add('hidden');
       document.getElementById('gradingLoadingArea').classList.remove('hidden');
 
-      // AI System Evaluation Prompt
       const systemPrompt = `
-Du är en sträng och erfaren kemilärare i den svenska grundskolan som rättar nationella prov för årskurs 8 utifrån Skolverkets Lgr22-kriterier.
+Du är en sträng och erfaren kemilärare i den svenska grundskolan som rättar det nationella provet i kemi (Åk 8) utifrån Skolverkets Lgr22-kriterier och givna provanteckningar.
 
 DITT UPPDRAG:
 Granska elevens svar och ge en objektiv, pedagogisk och noggrann rättning.
 
 REGLER FÖR BETYGSSÄTTNING & STRUKTUR:
-1. Elevens svar MÅSTE följa logisk ordning (Steg 1: Orsak/Definition -> Steg 2: Process/Förklaring -> Steg 3: Slutsats/Konsekvens).
-2. Om eleven har rätt fakta men saknar struktur eller hoppar över steg, ge poängavdrag och förklara exakt varför.
-3. Kontrollera användningen av kemiska begrepp (valenselektroner, elektronskal, ädelgasstruktur, joner, attraktionskraft etc.).
-4. Ett E-prov kan ALDRIG ge högre än E i slutbetyg. Ett C-prov kan max ge C.
-
-A-PROV OCH A-SVAR KRÄVER:
-- Flerstegsresonemang i minst 3 sammanhängande led.
-- Exakta naturvetenskapliga begrepp.
-- Citat från elevens egen text som bevis för vad som var bra/bristfälligt.
+1. Elevens skriftliga svar MÅSTE följa logisk ordning (Steg 1: Orsak -> Steg 2: Process -> Steg 3: Slutsats).
+2. Om eleven har rätt fakta men saknar struktur, ge poängavdrag.
+3. Kontrollera användningen av kemiska begrepp (valenselektroner, ionbindning, fria elektroner, halveringstid etc.).
+4. Sätt slutbetyg (E, C, A eller F) baserat på hur väl eleven nått upp till E-, C- och A-nivåernas krav i provet.
 
 Returnera ENBART ett giltigt JSON-objekt med följande format utan markdown eller extra text:
 {
@@ -847,7 +700,7 @@ Returnera ENBART ett giltigt JSON-objekt med följande format utan markdown elle
       `;
 
       const userPayload = {
-        examLevel: currentExam.levelKey,
+        examTitle: currentExam.title,
         cheatWarnings: cheatWarnings,
         answers: answers
       };
@@ -876,24 +729,15 @@ Returnera ENBART ett giltigt JSON-objekt med följande format utan markdown elle
         gradingResult = JSON.parse(data.choices[0].message.content);
       } catch (err) {
         console.error("Groq AI API error, executing fallback grading:", err);
-        gradingResult = fallbackGradingLogic(answers, currentExam.levelKey);
+        gradingResult = fallbackGradingLogic(answers);
       }
 
-      // Cap Grade based on test level selection rules
-      if (currentExam.levelKey === 'E' && gradingResult.finalGrade !== 'F') gradingResult.finalGrade = 'E';
-      if (currentExam.levelKey === 'C' && ['A'].includes(gradingResult.finalGrade)) gradingResult.finalGrade = 'C';
-
-      // Save submission record to localStorage
-      saveExamSubmission(gradingResult);
-
-      // Display Dashboard
       document.getElementById('gradingLoadingArea').classList.add('hidden');
       renderDashboardResult(gradingResult);
       switchTab('dash');
     }
 
-    // --- FALLBACK LOCAL EVALUATION LOGIC ---
-    function fallbackGradingLogic(answers, levelKey) {
+    function fallbackGradingLogic(answers) {
       let totalPts = 0;
       let maxPts = 0;
       const qResults = [];
@@ -909,8 +753,8 @@ Returnera ENBART ett giltigt JSON-objekt med följande format utan markdown elle
             questionId: a.id,
             score: isCorrect ? 2 : 0,
             maxScore: 2,
-            feedback: isCorrect ? "Korrekt svar på flervalsfråga." : "Felaktigt svarVal.",
-            quoteEvidence: isCorrect ? "Korrekt alternativ valt." : "Fel alternativ valt.",
+            feedback: isCorrect ? "Korrekt svar på flervalsfråga." : "Felaktigt svarsalternativ.",
+            quoteEvidence: "Flerval",
             modelAnswer: "Se facit för rätt alternativ."
           });
         } else {
@@ -922,7 +766,7 @@ Returnera ENBART ett giltigt JSON-objekt med följande format utan markdown elle
           a.keyTerms.forEach(kt => {
             const has = text.toLowerCase().includes(kt.toLowerCase());
             if (has) foundTerms++;
-            concepts.push({ term: kt, used: has, comment: has ? "Rätt använd" : "Saknades i texten" });
+            concepts.push({ term: kt, used: has, comment: has ? "Använt" : "Saknas" });
           });
 
           if (text.length > 30) score += 2;
@@ -934,16 +778,16 @@ Returnera ENBART ett giltigt JSON-objekt med följande format utan markdown elle
             questionId: a.id,
             followedOrder: score >= 4,
             deduction: 5 - score,
-            explanation: score < 4 ? "Resonemanget saknar tydlig orsak-verkan kedja eller kemiska begrepp." : "Bra struktur på svaret."
+            explanation: score < 4 ? "Resonemanget saknar tillräckliga steg eller kemiska begrepp." : "Bra struktur."
           });
 
           qResults.push({
             questionId: a.id,
             score: score,
             maxScore: 5,
-            feedback: `Du fick ${score}/5 poäng. Använde ${foundTerms} av ${a.keyTerms.length} nyckelbegrepp.`,
-            quoteEvidence: text.length > 0 ? `"${text.substring(0, 60)}..."` : "Inget svar angivet.",
-            modelAnswer: "Ett komplett svar ska beskriva orsak, kemisk process och slutsats i 3 tydliga steg."
+            feedback: `Du fick ${score}/5 poäng.`,
+            quoteEvidence: text.length > 0 ? `"${text.substring(0, 60)}..."` : "Ej besvarad",
+            modelAnswer: "Ett fullständigt svar kräver tydlig kedja av orsak, process och slutsats."
           });
         }
       });
@@ -958,33 +802,14 @@ Returnera ENBART ett giltigt JSON-objekt med följande format utan markdown elle
         finalGrade: grade,
         totalPoints: totalPts,
         maxPoints: maxPts,
-        conceptsAnalysis: concepts.slice(0, 5),
+        conceptsAnalysis: concepts.slice(0, 6),
         structureAnalysis: struct,
         questionResults: qResults
       };
     }
 
-    // --- SAVE SUBMISSION TO LOCAL DATABASE ---
-    function saveExamSubmission(result) {
-      const history = JSON.parse(localStorage.getItem('examHistory') || '[]');
-      const newEntry = {
-        timestamp: new Date().toLocaleString('sv-SE'),
-        title: currentExam.levelTitle,
-        level: currentExam.levelKey,
-        score: `${result.totalPoints} / ${result.maxPoints}`,
-        grade: result.finalGrade,
-        cheatWarnings: cheatWarnings,
-        ip: currentUserIp,
-        details: result
-      };
-      history.unshift(newEntry);
-      localStorage.setItem('examHistory', JSON.stringify(history));
-      updateTeacherDashboard();
-    }
-
-    // --- RENDER STUDENT DASHBOARD RESULT ---
     function renderDashboardResult(res) {
-      document.getElementById('dashExamTitle').innerText = currentExam ? currentExam.levelTitle : "Nationellt Prov";
+      document.getElementById('dashExamTitle').innerText = currentExam ? currentExam.title : "Nationellt Prov";
       document.getElementById('dashExamSub').innerText = `Genomfört: ${new Date().toLocaleString('sv-SE')} | IP: ${currentUserIp}`;
       document.getElementById('dashGradeBadge').innerText = res.finalGrade;
       document.getElementById('dashScoreBadge').innerText = `${res.totalPoints} / ${res.maxPoints}`;
@@ -992,7 +817,6 @@ Returnera ENBART ett giltigt JSON-objekt med följande format utan markdown elle
       document.getElementById('dashGradeBox').classList.remove('hidden');
       document.getElementById('dashContentArea').classList.remove('hidden');
 
-      // Concepts List
       const conceptsList = document.getElementById('conceptsList');
       conceptsList.innerHTML = "";
       if (res.conceptsAnalysis && res.conceptsAnalysis.length > 0) {
@@ -1006,11 +830,8 @@ Returnera ENBART ett giltigt JSON-objekt med följande format utan markdown elle
             </div>
           `;
         });
-      } else {
-        conceptsList.innerHTML = `<div class="text-zinc-500">Inga begrepp analyserades.</div>`;
       }
 
-      // Structure Feedback List
       const structList = document.getElementById('structureFeedbackList');
       structList.innerHTML = "";
       if (res.structureAnalysis && res.structureAnalysis.length > 0) {
@@ -1020,7 +841,7 @@ Returnera ENBART ett giltigt JSON-objekt med följande format utan markdown elle
               <div class="flex justify-between items-center">
                 <span class="font-bold text-white">Fråga ${s.questionId}</span>
                 <span class="font-mono text-xs ${s.followedOrder ? 'text-emerald-400' : 'text-amber-400'}">
-                  ${s.followedOrder ? 'Perfekt Struktur' : `Poängavdrag (-${s.deduction}p)`}
+                  ${s.followedOrder ? 'Godkänd struktur' : `Avdrag (-${s.deduction}p)`}
                 </span>
               </div>
               <p class="text-zinc-400 text-[11px]">${s.explanation}</p>
@@ -1029,10 +850,9 @@ Returnera ENBART ett giltigt JSON-objekt med följande format utan markdown elle
         });
       }
 
-      // Question Breakdown
       const qReview = document.getElementById('dashQuestionsReview');
       qReview.innerHTML = "";
-      res.questionResults.forEach((qr, idx) => {
+      res.questionResults.forEach((qr) => {
         qReview.innerHTML += `
           <div class="bg-black/50 border border-zinc-800 p-4 rounded-xl space-y-2">
             <div class="flex items-center justify-between text-xs border-b border-zinc-800/80 pb-2">
@@ -1040,9 +860,9 @@ Returnera ENBART ett giltigt JSON-objekt med följande format utan markdown elle
               <span class="font-mono text-zinc-300">Poäng: ${qr.score} / ${qr.maxScore}</span>
             </div>
             <p class="text-sm text-zinc-200">${qr.feedback}</p>
-            ${qr.quoteEvidence ? `<div class="text-xs text-zinc-400 italic bg-zinc-900/80 p-2 rounded border border-zinc-800">Citat från ditt svar: "${qr.quoteEvidence}"</div>` : ''}
+            ${qr.quoteEvidence ? `<div class="text-xs text-zinc-400 italic bg-zinc-900/80 p-2 rounded border border-zinc-800">Citat: ${qr.quoteEvidence}</div>` : ''}
             <div class="text-xs text-emerald-400/90 bg-emerald-950/20 p-2 rounded border border-emerald-900/30">
-              <strong>Modellsvar (Lgr22 A-nivå):</strong> ${qr.modelAnswer}
+              <strong>Modellsvar:</strong> ${qr.modelAnswer}
             </div>
           </div>
         `;
@@ -1051,70 +871,11 @@ Returnera ENBART ett giltigt JSON-objekt med följande format utan markdown elle
       lucide.createIcons();
     }
 
-    // --- UPDATE TEACHER DASHBOARD ---
-    function updateTeacherDashboard() {
-      const history = JSON.parse(localStorage.getItem('examHistory') || '[]');
-      document.getElementById('teacherTotalExams').innerText = history.length;
-
-      if (history.length === 0) return;
-
-      let sumPct = 0;
-      let structWarns = 0;
-      const gradeCounts = {};
-
-      const tbody = document.getElementById('teacherTableBody');
-      tbody.innerHTML = "";
-
-      history.forEach(item => {
-        const scoreParts = item.score.split('/');
-        const pts = parseFloat(scoreParts[0]);
-        const max = parseFloat(scoreParts[1]);
-        if (max > 0) sumPct += (pts / max);
-
-        gradeCounts[item.grade] = (gradeCounts[item.grade] || 0) + 1;
-        if (item.cheatWarnings > 0) structWarns++;
-
-        tbody.innerHTML += `
-          <tr class="hover:bg-zinc-800/40">
-            <td class="p-3 font-mono">${item.timestamp}</td>
-            <td class="p-3 font-bold text-white">${item.title}</td>
-            <td class="p-3 font-mono text-yellow-400">${item.score}</td>
-            <td class="p-3 font-mono font-bold text-emerald-400">${item.grade}</td>
-            <td class="p-3 font-mono ${item.cheatWarnings > 0 ? 'text-red-400 font-bold' : 'text-zinc-500'}">${item.cheatWarnings} varningar</td>
-            <td class="p-3 font-mono text-zinc-400">${item.ip}</td>
-          </tr>
-        `;
-      });
-
-      const avgPct = Math.round((sumPct / history.length) * 100);
-      document.getElementById('teacherAvgScore').innerText = `${avgPct}%`;
-      document.getElementById('teacherStructureWarns').innerText = structWarns;
-
-      let topGrade = "-";
-      let maxGCount = 0;
-      for (const g in gradeCounts) {
-        if (gradeCounts[g] > maxGCount) {
-          maxGCount = gradeCounts[g];
-          topGrade = g;
-        }
-      }
-      document.getElementById('teacherMostCommonGrade').innerText = topGrade;
-    }
-
-    function clearClassHistory() {
-      if (confirm("Rensa all sparad provhistorik för klassen?")) {
-        localStorage.removeItem('examHistory');
-        updateTeacherDashboard();
-      }
-    }
-
-    // --- PTABLE IFRAME RELOAD ---
     function reloadPtable() {
       const iframe = document.getElementById('ptableIframe');
       iframe.src = iframe.src;
     }
 
-    // --- ADMIN MODAL CONTROLS ---
     function openAdminModal() {
       document.getElementById('adminModal').classList.remove('hidden');
     }
